@@ -49,6 +49,19 @@ const seedDatabase = async () => {
   try {
     await sequelize.sync({ alter: true });
     
+    // Default Admin
+    const adminCount = await Admin.count();
+    if (adminCount === 0) {
+      const defaultPassword = process.env.ADMIN_PASSWORD || 'admin123';
+      const password_hash = await bcrypt.hash(defaultPassword, 10);
+      await Admin.create({
+        email: 'master@admin.com',
+        password_hash,
+        role: 'super_admin'
+      });
+      console.log(`Default admin created with password: ${defaultPassword}`);
+    }
+
     // Default About
     const about = await About.findOne();
     if (!about) await About.create({});
