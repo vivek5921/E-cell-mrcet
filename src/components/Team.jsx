@@ -214,7 +214,7 @@ export const Team = () => {
                 border: '3px solid var(--bg-primary)'
               }}>
                 {member.image_url ? (
-                  <img src={`${API_URL}${member.image_url}`} alt={member.name} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+                  <img src={member.image_url.startsWith('http') ? member.image_url : `${API_URL}${member.image_url}`} alt={member.name} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
                 ) : (
                   member.initials
                 )}

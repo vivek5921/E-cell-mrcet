@@ -54,7 +54,7 @@ export const Gallery = () => {
               {/* Image Container with Zoom */}
               <div style={{ height: '240px', overflow: 'hidden', position: 'relative' }}>
                 <img
-                  src={item.image_url}
+                  src={item.image_url?.startsWith('http') ? item.image_url : `${API_URL}${item.image_url}`}
                   alt={item.title}
                   style={{
                     width: '100%',
@@ -184,7 +184,7 @@ export const Gallery = () => {
               </button>
 
               <img
-                src={activeImage.image_url}
+                src={activeImage.image_url?.startsWith('http') ? activeImage.image_url : `${API_URL}${activeImage.image_url}`}
                 alt={activeImage.title}
                 style={{ width: '100%', maxHeight: '500px', objectFit: 'cover', display: 'block' }}
               />

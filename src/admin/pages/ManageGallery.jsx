@@ -135,7 +135,7 @@ export const ManageGallery = () => {
       <div style={{ marginTop: '2rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem' }}>
         {images.map(img => (
           <div key={img.id} className="glass-card" style={{ padding: '1rem', position: 'relative' }}>
-            <img src={img.image_url} alt={img.title} style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: 'var(--radius-sm)' }} />
+            <img src={img.image_url?.startsWith('http') ? img.image_url : `${API_URL}${img.image_url}`} alt={img.title} style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: 'var(--radius-sm)' }} />
             <h4 style={{ marginTop: '0.5rem', fontSize: '1rem' }}>{img.title}</h4>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>{img.category}</p>
             <button onClick={() => handleDelete(img.id)} style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', background: '#ef4444', color: 'white', border: 'none', padding: '0.5rem', borderRadius: '50%', cursor: 'pointer' }}>
