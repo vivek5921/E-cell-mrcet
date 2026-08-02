@@ -24,7 +24,7 @@ export const AdminDashboard = () => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const res = await axios.get(`${API_URL}/api/auth/me`, { withCredentials: true });
+        const res = await axios.get(`${API_URL}/api/auth/me`, { headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` } });
         setAdmin(res.data.admin);
       } catch (err) {
         window.location.reload(); // Logout if auth fails
@@ -37,7 +37,8 @@ export const AdminDashboard = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post(`${API_URL}/api/auth/logout`, {}, { withCredentials: true });
+      await axios.post(`${API_URL}/api/auth/logout`, {}, { headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` } });
+      localStorage.removeItem('adminToken');
       window.location.reload();
     } catch (err) {
       console.error(err);

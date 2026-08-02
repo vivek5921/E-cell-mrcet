@@ -49,8 +49,7 @@ export const ManageGallery = () => {
         const uploadData = new FormData();
         uploadData.append('image', selectedFile);
         const uploadRes = await axios.post(`${API_URL}/api/upload`, uploadData, {
-          withCredentials: true,
-          headers: { 'Content-Type': 'multipart/form-data' }
+          headers: { 'Content-Type': 'multipart/form-data', Authorization: `Bearer ${localStorage.getItem('adminToken')}` }
         });
         finalImageUrl = uploadRes.data.url; // Absolute URL from backend
       }
@@ -59,7 +58,7 @@ export const ManageGallery = () => {
         title: formData.title,
         category: formData.category,
         image_url: finalImageUrl
-      }, { withCredentials: true });
+      }, { headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` } });
       
       setFormData({ title: '', category: 'Events', image_url: '' });
       setSelectedFile(null);
@@ -79,7 +78,7 @@ export const ManageGallery = () => {
   const handleDelete = async (id) => {
     if (!window.confirm('Delete image?')) return;
     try {
-      await axios.delete(`${API_URL}/api/gallery/${id}`, { withCredentials: true });
+      await axios.delete(`${API_URL}/api/gallery/${id}`, { headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` } });
       fetchImages();
     } catch (err) {
       console.error(err);

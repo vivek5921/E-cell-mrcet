@@ -53,13 +53,11 @@ router.post('/login', async (req, res) => {
       { expiresIn: '1d' }
     );
 
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict'
+    res.json({ 
+      message: 'Logged in successfully', 
+      token,
+      admin: { id: admin.id, role: admin.role } 
     });
-
-    res.json({ message: 'Logged in successfully', admin: { id: admin.id, role: admin.role } });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
@@ -67,11 +65,6 @@ router.post('/login', async (req, res) => {
 });
 
 router.post('/logout', (req, res) => {
-  res.clearCookie('token', {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict'
-  });
   res.json({ message: 'Logged out successfully' });
 });
 

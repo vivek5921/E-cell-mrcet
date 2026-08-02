@@ -34,7 +34,8 @@ export const HiddenAdminGate = () => {
 
     try {
       // Always attempt to login. The setup phase is removed.
-      await axios.post(`${API_URL}/api/auth/login`, { password }, { withCredentials: true });
+      const res = await axios.post(`${API_URL}/api/auth/login`, { password });
+      localStorage.setItem('adminToken', res.data.token);
       setIsAuthenticated(true);
       setPassword('');
     } catch (err) {
@@ -52,7 +53,10 @@ export const HiddenAdminGate = () => {
           setIsOpen(false);
           setIsAuthenticated(false);
           try {
-            await axios.post(`${API_URL}/api/auth/logout`, {}, { withCredentials: true });
+            await axios.post(`${API_URL}/api/auth/logout`, {}, {
+              headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` }
+            });
+            localStorage.removeItem('adminToken');
           } catch (e) {}
         }} style={{ position: 'absolute', top: '1rem', right: '1rem', zIndex: 10000, background: '#ef4444', color: 'white', border: 'none', borderRadius: '50%', width: '40px', height: '40px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(0,0,0,0.3)' }}>
           <X size={20} />

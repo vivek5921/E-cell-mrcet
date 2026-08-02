@@ -9,7 +9,7 @@ export const ManageMessages = () => {
 
   const fetchMessages = async () => {
     try {
-      const res = await axios.get(`${API_URL}/api/messages`, { withCredentials: true });
+      const res = await axios.get(`${API_URL}/api/messages`, { headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` } });
       setMessages(res.data);
     } catch (err) {
       console.error(err);
@@ -24,7 +24,7 @@ export const ManageMessages = () => {
 
   const handleMarkRead = async (id) => {
     try {
-      await axios.put(`${API_URL}/api/messages/${id}/read`, {}, { withCredentials: true });
+      await axios.put(`${API_URL}/api/messages/${id}/read`, {}, { headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` } });
       fetchMessages();
     } catch (err) {
       console.error(err);
@@ -34,7 +34,7 @@ export const ManageMessages = () => {
   const handleDelete = async (id) => {
     if (!window.confirm('Delete message?')) return;
     try {
-      await axios.delete(`${API_URL}/api/messages/${id}`, { withCredentials: true });
+      await axios.delete(`${API_URL}/api/messages/${id}`, { headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` } });
       fetchMessages();
     } catch (err) {
       console.error(err);

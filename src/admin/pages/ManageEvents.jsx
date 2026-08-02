@@ -26,7 +26,7 @@ export const ManageEvents = () => {
   const handleAdd = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`${API_URL}/api/events`, formData, { withCredentials: true });
+      await axios.post(`${API_URL}/api/events`, formData, { headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` } });
       setFormData({ title: '', date: '', location: '', description: '', category: 'Flagship' });
       fetchEvents();
     } catch (err) {
@@ -37,7 +37,7 @@ export const ManageEvents = () => {
   const handleDelete = async (id) => {
     if (!window.confirm('Delete event?')) return;
     try {
-      await axios.delete(`${API_URL}/api/events/${id}`, { withCredentials: true });
+      await axios.delete(`${API_URL}/api/events/${id}`, { headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` } });
       fetchEvents();
     } catch (err) {
       console.error(err);

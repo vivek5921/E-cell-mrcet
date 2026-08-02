@@ -26,7 +26,7 @@ export const ManageTeam = () => {
   const handleAdd = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`${API_URL}/api/team`, formData, { withCredentials: true });
+      await axios.post(`${API_URL}/api/team`, formData, { headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` } });
       setFormData({ name: '', role: '', category: 'Technical', department: '', email: '', bio: '' });
       fetchTeam();
     } catch (err) {
@@ -37,7 +37,7 @@ export const ManageTeam = () => {
   const handleDelete = async (id) => {
     if (!window.confirm('Delete member?')) return;
     try {
-      await axios.delete(`${API_URL}/api/team/${id}`, { withCredentials: true });
+      await axios.delete(`${API_URL}/api/team/${id}`, { headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` } });
       fetchTeam();
     } catch (err) {
       console.error(err);

@@ -9,7 +9,7 @@ export const ManageMembers = () => {
 
   const fetchMembers = async () => {
     try {
-      const res = await axios.get(`${API_URL}/api/registrations`, { withCredentials: true });
+      const res = await axios.get(`${API_URL}/api/registrations`, { headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` } });
       setMembers(res.data);
     } catch (err) {
       console.error(err);
@@ -25,7 +25,7 @@ export const ManageMembers = () => {
   const handleDelete = async (id) => {
     if (!window.confirm('Remove this member?')) return;
     try {
-      await axios.delete(`${API_URL}/api/registrations/${id}`, { withCredentials: true });
+      await axios.delete(`${API_URL}/api/registrations/${id}`, { headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` } });
       fetchMembers();
     } catch (err) {
       console.error(err);
