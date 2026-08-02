@@ -12,18 +12,7 @@ export const HiddenAdminGate = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Check setup status on mount
-  useEffect(() => {
-    const checkStatus = async () => {
-      try {
-        const setupRes = await axios.get('http://localhost:5000/api/auth/status');
-        setIsSetup(setupRes.data.isSetup);
-      } catch (err) {
-        console.error('Failed to check setup status', err);
-      }
-    };
-    checkStatus();
-  }, []);
+  // Removed checkStatus effect as we only want login functionality now
 
   // Global Keyboard Listener: Ctrl + Shift + A
   useEffect(() => {
@@ -43,18 +32,9 @@ export const HiddenAdminGate = () => {
     setError('');
 
     try {
-      if (!isSetup) {
-        // Setup Master Password
-        await axios.post('http://localhost:5000/api/auth/setup', { password });
-        setIsSetup(true);
-        // Automatically log in after setup
-        await axios.post('http://localhost:5000/api/auth/login', { password }, { withCredentials: true });
-        setIsAuthenticated(true);
-      } else {
-        // Login with Master Password
-        await axios.post('http://localhost:5000/api/auth/login', { password }, { withCredentials: true });
-        setIsAuthenticated(true);
-      }
+      // Always attempt to login. The setup phase is removed.
+      await axios.post('http://localhost:5000/api/auth/login', { password }, { withCredentials: true });
+      setIsAuthenticated(true);
       setPassword('');
     } catch (err) {
       setError(err.response?.data?.message || 'Authentication failed');
@@ -106,10 +86,10 @@ export const HiddenAdminGate = () => {
             </div>
 
             <h2 style={{ marginBottom: '0.5rem', fontSize: '1.5rem' }}>
-              {!isSetup ? 'Set Master Password' : 'Admin Authentication'}
+              Admin Authentication
             </h2>
             <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem', fontSize: '0.9rem' }}>
-              {!isSetup ? 'This will be your permanent admin password.' : 'Enter your master password to access the CMS.'}
+              Enter your master password to access the CMS.
             </p>
 
             {error && <div style={{ color: '#ef4444', marginBottom: '1rem', fontSize: '0.85rem' }}>{error}</div>}
@@ -119,7 +99,7 @@ export const HiddenAdminGate = () => {
                 <Key size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
                 <input
                   type="password"
-                  placeholder={!isSetup ? 'Create Password' : 'Password'}
+                  placeholder="Password"
                   className="form-input"
                   style={{ paddingLeft: '2.5rem', width: '100%', textAlign: 'center' }}
                   value={password}
@@ -129,7 +109,7 @@ export const HiddenAdminGate = () => {
                 />
               </div>
               <button type="submit" className="btn btn-primary" style={{ width: '100%' }} disabled={loading}>
-                {loading ? 'Processing...' : (!isSetup ? 'Save & Login' : 'Access Dashboard')}
+                {loading ? 'Processing...' : 'Access Dashboard'}
               </button>
             </form>
           </motion.div>
