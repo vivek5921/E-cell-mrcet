@@ -22,7 +22,12 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:5173', // React dev server
+  origin: [
+    'http://localhost:5173', 
+    'http://localhost:5174', 
+    'https://e-cell-mrcet.vercel.app',
+    process.env.FRONTEND_URL
+  ].filter(Boolean),
   credentials: true
 }));
 app.use(express.json());

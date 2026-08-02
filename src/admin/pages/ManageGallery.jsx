@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_URL } from '../../config.js';
 import axios from 'axios';
 import { Trash2 } from 'lucide-react';
 
@@ -11,8 +12,7 @@ export const ManageGallery = () => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   
-  const API_URL = `http://${window.location.hostname}:5000`;
-
+  
   const fetchImages = async () => {
     try {
       const res = await axios.get(`${API_URL}/api/public/gallery`);

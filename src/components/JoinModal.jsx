@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { API_URL } from '../config.js';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Rocket, CheckCircle, Sparkles } from 'lucide-react';
 import confetti from 'canvas-confetti';
@@ -22,7 +23,7 @@ export const JoinModal = ({ isOpen, onClose }) => {
     e.preventDefault();
     
     try {
-      await axios.post('http://localhost:5000/api/public/join', {
+      await axios.post(`${API_URL}/api/public/join`, {
         full_name: formData.name,
         email: formData.email,
         roll_number: formData.rollNo,

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_URL } from '../config.js';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Shield, X, Key, CheckCircle } from 'lucide-react';
 import axios from 'axios';
@@ -33,7 +34,7 @@ export const HiddenAdminGate = () => {
 
     try {
       // Always attempt to login. The setup phase is removed.
-      await axios.post('http://localhost:5000/api/auth/login', { password }, { withCredentials: true });
+      await axios.post(`${API_URL}/api/auth/login`, { password }, { withCredentials: true });
       setIsAuthenticated(true);
       setPassword('');
     } catch (err) {
@@ -51,7 +52,7 @@ export const HiddenAdminGate = () => {
           setIsOpen(false);
           setIsAuthenticated(false);
           try {
-            await axios.post('http://localhost:5000/api/auth/logout', {}, { withCredentials: true });
+            await axios.post(`${API_URL}/api/auth/logout`, {}, { withCredentials: true });
           } catch (e) {}
         }} style={{ position: 'absolute', top: '1rem', right: '1rem', zIndex: 10000, background: '#ef4444', color: 'white', border: 'none', borderRadius: '50%', width: '40px', height: '40px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(0,0,0,0.3)' }}>
           <X size={20} />

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { API_URL } from '../config.js';
 import axios from 'axios';
 import { 
   LayoutDashboard, Info, Users, Calendar, Image as ImageIcon, 
@@ -23,7 +24,7 @@ export const AdminDashboard = () => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/auth/me', { withCredentials: true });
+        const res = await axios.get(`${API_URL}/api/auth/me`, { withCredentials: true });
         setAdmin(res.data.admin);
       } catch (err) {
         window.location.reload(); // Logout if auth fails
@@ -36,7 +37,7 @@ export const AdminDashboard = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post('http://localhost:5000/api/auth/logout', {}, { withCredentials: true });
+      await axios.post(`${API_URL}/api/auth/logout`, {}, { withCredentials: true });
       window.location.reload();
     } catch (err) {
       console.error(err);

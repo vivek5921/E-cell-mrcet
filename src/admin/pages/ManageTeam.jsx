@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_URL } from '../../config.js';
 import axios from 'axios';
 import { Trash2, Edit } from 'lucide-react';
 
@@ -9,7 +10,7 @@ export const ManageTeam = () => {
 
   const fetchTeam = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/public/team');
+      const res = await axios.get(`${API_URL}/api/public/team`);
       setTeam(res.data);
     } catch (err) {
       console.error(err);
@@ -25,7 +26,7 @@ export const ManageTeam = () => {
   const handleAdd = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/team', formData, { withCredentials: true });
+      await axios.post(`${API_URL}/api/team`, formData, { withCredentials: true });
       setFormData({ name: '', role: '', category: 'Technical', department: '', email: '', bio: '' });
       fetchTeam();
     } catch (err) {
@@ -36,7 +37,7 @@ export const ManageTeam = () => {
   const handleDelete = async (id) => {
     if (!window.confirm('Delete member?')) return;
     try {
-      await axios.delete(`http://localhost:5000/api/team/${id}`, { withCredentials: true });
+      await axios.delete(`${API_URL}/api/team/${id}`, { withCredentials: true });
       fetchTeam();
     } catch (err) {
       console.error(err);

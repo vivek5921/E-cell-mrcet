@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_URL } from '../config.js';
 import { motion } from 'framer-motion';
 import { Mail, Sparkles } from 'lucide-react';
 import { LinkedinIcon } from './SocialIcons';
@@ -100,7 +101,7 @@ export const Team = () => {
   ];
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/public/team')
+    axios.get(`${API_URL}/api/public/team`)
       .then(res => {
         if (res.data && res.data.length > 0) {
           // Map backend fields to frontend fields
@@ -213,7 +214,7 @@ export const Team = () => {
                 border: '3px solid var(--bg-primary)'
               }}>
                 {member.image_url ? (
-                  <img src={`http://localhost:5000${member.image_url}`} alt={member.name} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+                  <img src={`${API_URL}${member.image_url}`} alt={member.name} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
                 ) : (
                   member.initials
                 )}

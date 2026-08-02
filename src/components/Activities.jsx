@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_URL } from '../config.js';
 import { motion } from 'framer-motion';
 import { Calendar, Clock, MapPin, Bell, Check } from 'lucide-react';
 import axios from 'axios';
@@ -56,7 +57,7 @@ export const Activities = () => {
   ];
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/public/events')
+    axios.get(`${API_URL}/api/public/events`)
       .then(res => {
         if (res.data && res.data.length > 0) {
           setEvents(res.data);

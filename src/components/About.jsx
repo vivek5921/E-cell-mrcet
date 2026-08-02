@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_URL } from '../config.js';
 import { motion } from 'framer-motion';
 import { BookOpen, Code, Users, Mic, Sparkles, TrendingUp, Lightbulb } from 'lucide-react';
 import axios from 'axios';
@@ -10,7 +11,7 @@ export const About = () => {
   });
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/public/about')
+    axios.get(`${API_URL}/api/public/about`)
       .then(res => {
         if (res.data && res.data.heading) {
           setAboutData(res.data);

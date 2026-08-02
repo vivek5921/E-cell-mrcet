@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_URL } from '../../config.js';
 import axios from 'axios';
 import { Trash2, UserCheck } from 'lucide-react';
 
@@ -8,7 +9,7 @@ export const ManageMembers = () => {
 
   const fetchMembers = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/registrations', { withCredentials: true });
+      const res = await axios.get(`${API_URL}/api/registrations`, { withCredentials: true });
       setMembers(res.data);
     } catch (err) {
       console.error(err);
@@ -24,7 +25,7 @@ export const ManageMembers = () => {
   const handleDelete = async (id) => {
     if (!window.confirm('Remove this member?')) return;
     try {
-      await axios.delete(`http://localhost:5000/api/registrations/${id}`, { withCredentials: true });
+      await axios.delete(`${API_URL}/api/registrations/${id}`, { withCredentials: true });
       fetchMembers();
     } catch (err) {
       console.error(err);

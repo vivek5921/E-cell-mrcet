@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { API_URL } from '../config.js';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, MapPin, Send, CheckCircle, AlertCircle, Sparkles } from 'lucide-react';
 import { InstagramIcon, LinkedinIcon } from './SocialIcons';
@@ -27,7 +28,7 @@ export const Contact = () => {
 
     setStatus('submitting');
     try {
-      await axios.post('http://localhost:5000/api/public/contact', formData);
+      await axios.post(`${API_URL}/api/public/contact`, formData);
       setStatus('success');
       setFormData({ name: '', email: '', subject: 'General Inquiry', message: '' });
       setTimeout(() => setStatus(null), 5000);

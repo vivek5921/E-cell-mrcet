@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_URL } from '../config.js';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Image, X, ZoomIn, Calendar } from 'lucide-react';
 import axios from 'axios';
@@ -10,7 +11,7 @@ export const Gallery = () => {
   useEffect(() => {
     const fetchGallery = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/public/gallery');
+        const res = await axios.get(`${API_URL}/api/public/gallery`);
         setGalleryItems(res.data);
       } catch (err) {
         console.error('Failed to load gallery', err);

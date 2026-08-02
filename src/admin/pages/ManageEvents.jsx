@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_URL } from '../../config.js';
 import axios from 'axios';
 import { Trash2 } from 'lucide-react';
 
@@ -9,7 +10,7 @@ export const ManageEvents = () => {
 
   const fetchEvents = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/public/events');
+      const res = await axios.get(`${API_URL}/api/public/events`);
       setEvents(res.data);
     } catch (err) {
       console.error(err);
@@ -25,7 +26,7 @@ export const ManageEvents = () => {
   const handleAdd = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/events', formData, { withCredentials: true });
+      await axios.post(`${API_URL}/api/events`, formData, { withCredentials: true });
       setFormData({ title: '', date: '', location: '', description: '', category: 'Flagship' });
       fetchEvents();
     } catch (err) {
@@ -36,7 +37,7 @@ export const ManageEvents = () => {
   const handleDelete = async (id) => {
     if (!window.confirm('Delete event?')) return;
     try {
-      await axios.delete(`http://localhost:5000/api/events/${id}`, { withCredentials: true });
+      await axios.delete(`${API_URL}/api/events/${id}`, { withCredentials: true });
       fetchEvents();
     } catch (err) {
       console.error(err);
