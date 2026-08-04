@@ -1,9 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, Sparkles, Users, Award, Rocket, DollarSign } from 'lucide-react';
+import { ArrowRight, Users, Award, Rocket, DollarSign } from 'lucide-react';
 
 export const Hero = ({ onOpenJoinModal }) => {
-  // Stat Counter Animation Logic
+  // Stat Counter Data
   const stats = [
     { label: 'Active Members', value: 500, suffix: '+', icon: Users },
     { label: 'Startups Mentored', value: 20, suffix: '+', icon: Rocket },
@@ -12,35 +12,34 @@ export const Hero = ({ onOpenJoinModal }) => {
   ];
 
   return (
-    <section id="hero" className="section" style={{ paddingTop: '8.5rem', paddingBottom: '5rem', position: 'relative', overflow: 'hidden' }}>
-      {/* Background ambient glow shapes */}
+    <section id="hero" style={{ 
+      paddingTop: '9rem', 
+      paddingBottom: '4rem', 
+      position: 'relative', 
+      overflow: 'hidden',
+      background: 'url(/images/grid-bg.svg) center/cover no-repeat', // optional subtle grid
+      backgroundColor: 'var(--bg-primary)'
+    }}>
+      {/* Background ambient glow behind the logo on the right */}
       <div 
-        className="glow-background" 
+        className="glow-background animate-glow-pulse" 
         style={{ 
-          top: '10%', 
-          left: '15%', 
-          width: '350px', 
-          height: '350px', 
-          background: 'rgba(37, 99, 235, 0.25)' 
-        }} 
-      />
-      <div 
-        className="glow-background" 
-        style={{ 
-          top: '40%', 
-          right: '10%', 
-          width: '400px', 
-          height: '400px', 
-          background: 'rgba(34, 197, 94, 0.18)' 
+          top: '20%', 
+          right: '5%', 
+          width: '600px', 
+          height: '600px', 
+          background: 'rgba(15, 98, 254, 0.15)',
+          filter: 'blur(100px)'
         }} 
       />
 
       <div className="container" style={{ position: 'relative', zIndex: 1 }}>
         <div style={{
           display: 'grid',
-          gridTemplateColumns: '1.1fr 0.9fr',
-          gap: '3rem',
-          alignItems: 'center'
+          gridTemplateColumns: '1.2fr 0.8fr',
+          gap: '2rem',
+          alignItems: 'center',
+          marginBottom: '5rem'
         }} className="hero-grid">
           
           {/* Left Column: Text & CTA */}
@@ -49,199 +48,157 @@ export const Hero = ({ onOpenJoinModal }) => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, ease: 'easeOut' }}
           >
-            {/* Top Pill Badge */}
-            <div className="badge badge-primary" style={{ marginBottom: '1.5rem' }}>
-              <Sparkles size={16} /> Welcome to College E-Cell Hub
+            {/* Top Badge */}
+            <div style={{ 
+              display: 'inline-flex', 
+              alignItems: 'center', 
+              gap: '0.5rem',
+              padding: '0.4rem 1rem',
+              borderRadius: '9999px',
+              border: '1px solid var(--border-color)',
+              color: 'var(--text-secondary)',
+              fontSize: '0.85rem',
+              fontWeight: '500',
+              marginBottom: '1.5rem',
+              background: 'var(--bg-glass-card)'
+            }}>
+              <div style={{ width: 16, height: 16, borderRadius: '50%', overflow: 'hidden', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <img src="/images/logo.png" alt="icon" style={{ width: 32, height: 'auto', minWidth: 32 }} />
+              </div>
+              Welcome to MRCET E-Cell
             </div>
 
             {/* Main Headline */}
             <h1 style={{ 
-              fontSize: '3.6rem', 
-              letterSpacing: '-0.03em', 
+              letterSpacing: '-0.02em', 
               marginBottom: '1.25rem',
-              lineHeight: 1.15
+              lineHeight: 1.1
             }}>
-              Building Tomorrow's <br />
-              <span className="gradient-text">Entrepreneurs</span>
+              <span className="text-outline-silver" style={{ display: 'block', fontSize: 'min(4.5rem, 12vw)', fontWeight: '800' }}>
+                Building Tomorrow's
+              </span>
+              <span style={{ color: 'var(--color-primary)', fontSize: 'min(4.5rem, 12vw)', fontWeight: '800' }}>
+                Entrepreneurs
+              </span>
             </h1>
 
             {/* Sub-description */}
             <p style={{ 
-              fontSize: '1.2rem', 
+              fontSize: '1.15rem', 
               color: 'var(--text-secondary)', 
               marginBottom: '2.5rem',
               maxWidth: '560px',
-              fontWeight: '400'
+              fontWeight: '400',
+              lineHeight: 1.7
             }}>
               The Entrepreneurship Cell is a student-driven community that promotes innovation, startups, leadership, and problem solving.
             </p>
 
             {/* Buttons */}
-            <div style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap', marginBottom: '3.5rem' }}>
+            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
               <button 
                 onClick={onOpenJoinModal} 
                 className="btn btn-primary"
-                style={{ fontSize: '1.05rem', padding: '1rem 2.2rem' }}
+                style={{ fontSize: '1rem', padding: '0.9rem 2rem' }}
               >
                 Join E-Cell <ArrowRight size={18} />
               </button>
               <a 
                 href="#activities" 
                 className="btn btn-secondary"
-                style={{ fontSize: '1.05rem', padding: '1rem 2.2rem' }}
+                style={{ 
+                  fontSize: '1rem', 
+                  padding: '0.9rem 2rem',
+                  fontWeight: '600'
+                }}
               >
                 Explore Events
               </a>
             </div>
-
-            {/* Animated Counters Grid */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(4, 1fr)',
-              gap: '1.25rem',
-              paddingTop: '2rem',
-              borderTop: '1px solid var(--border-color)'
-            }} className="stats-grid">
-              {stats.map((stat, idx) => {
-                return (
-                  <motion.div 
-                    key={stat.label}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 + idx * 0.1, duration: 0.5 }}
-                  >
-                    <div style={{ 
-                      fontSize: '1.8rem', 
-                      fontWeight: '800', 
-                      fontFamily: 'var(--font-heading)',
-                      color: 'var(--text-primary)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.2rem'
-                    }}>
-                      <span style={{ color: 'var(--color-primary)' }}>{stat.prefix}</span>
-                      {stat.value}
-                      <span style={{ color: 'var(--color-accent)' }}>{stat.suffix}</span>
-                    </div>
-                    <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: '500' }}>
-                      {stat.label}
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </div>
           </motion.div>
 
-          {/* Right Column: Animated Floating Graphic */}
+          {/* Right Column: Large Logo with Glow */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.2 }}
-            style={{ position: 'relative', display: 'flex', justifyContent: 'center' }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1, delay: 0.2 }}
+            style={{ position: 'relative', display: 'flex', justifyContent: 'flex-end', paddingRight: '2rem' }}
+            className="hero-image-container"
           >
-            <div className="animate-float" style={{ width: '100%', maxWidth: '520px', position: 'relative' }}>
-              
-              {/* Image Frame Container with Glass Backdrop */}
-              <div style={{
-                position: 'relative',
-                borderRadius: 'var(--radius-lg)',
-                padding: '12px',
-                background: 'var(--bg-glass-card)',
-                backdropFilter: 'blur(20px)',
-                WebkitBackdropFilter: 'blur(20px)',
-                border: '1px solid var(--border-glow)',
-                boxShadow: 'var(--shadow-glow)'
-              }}>
-                <img 
-                  src="/images/hero_illustration.png" 
-                  alt="E-Cell Startup Innovation Illustration" 
-                  style={{
-                    width: '100%',
-                    height: 'auto',
-                    borderRadius: 'calc(var(--radius-lg) - 8px)',
-                    display: 'block',
-                    objectFit: 'cover'
-                  }}
-                />
-
-                {/* Floating Glass Accent Badge Top-Right */}
-                <motion.div
-                  animate={{ y: [0, -8, 0] }}
-                  transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
-                  style={{
-                    position: 'absolute',
-                    top: '-15px',
-                    right: '-15px',
-                    background: 'var(--bg-glass)',
-                    backdropFilter: 'blur(16px)',
-                    border: '1px solid var(--border-glow)',
-                    padding: '0.75rem 1.25rem',
-                    borderRadius: 'var(--radius-md)',
-                    boxShadow: 'var(--shadow-md)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.75rem'
-                  }}
-                >
-                  <div style={{
-                    width: '36px',
-                    height: '36px',
-                    borderRadius: '50%',
-                    background: 'var(--color-accent-light)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: 'var(--color-accent)'
-                  }}>
-                    <Rocket size={20} />
-                  </div>
-                  <div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Incubation</div>
-                    <div style={{ fontSize: '0.9rem', fontWeight: '700', color: 'var(--text-primary)' }}>Batch 2026 Live</div>
-                  </div>
-                </motion.div>
-
-                {/* Floating Glass Accent Badge Bottom-Left */}
-                <motion.div
-                  animate={{ y: [0, 8, 0] }}
-                  transition={{ repeat: Infinity, duration: 4.5, ease: 'easeInOut', delay: 1 }}
-                  style={{
-                    position: 'absolute',
-                    bottom: '-15px',
-                    left: '-15px',
-                    background: 'var(--bg-glass)',
-                    backdropFilter: 'blur(16px)',
-                    border: '1px solid var(--border-glow)',
-                    padding: '0.75rem 1.25rem',
-                    borderRadius: 'var(--radius-md)',
-                    boxShadow: 'var(--shadow-md)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.75rem'
-                  }}
-                >
-                  <div style={{
-                    width: '36px',
-                    height: '36px',
-                    borderRadius: '50%',
-                    background: 'var(--color-primary-light)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: 'var(--color-primary)'
-                  }}>
-                    <Award size={20} />
-                  </div>
-                  <div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Top Rated</div>
-                    <div style={{ fontSize: '0.9rem', fontWeight: '700', color: 'var(--text-primary)' }}>Student E-Cell</div>
-                  </div>
-                </motion.div>
-              </div>
-
+            <div className="animate-float" style={{ position: 'relative', width: '100%', maxWidth: '480px' }}>
+              <img 
+                src="/images/logo.png" 
+                alt="MRCET E-Cell Official Logo" 
+                style={{
+                  width: '100%',
+                  height: 'auto',
+                  display: 'block',
+                  filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.15))'
+                }}
+              />
             </div>
           </motion.div>
 
+        </div>
+
+        {/* Animated Counters Row at the bottom */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(4, 1fr)',
+          gap: '1.5rem',
+          width: '100%'
+        }} className="stats-row">
+          {stats.map((stat, idx) => {
+            const Icon = stat.icon;
+            return (
+              <motion.div 
+                key={stat.label}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 + idx * 0.1, duration: 0.5 }}
+                style={{ 
+                  background: 'var(--bg-glass-card)',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: '16px',
+                  padding: '1.5rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '1rem',
+                  boxShadow: 'var(--shadow-sm)'
+                }}
+              >
+                <div style={{ 
+                  width: '48px', 
+                  height: '48px', 
+                  borderRadius: '12px', 
+                  background: 'rgba(15, 98, 254, 0.1)', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center',
+                  color: 'var(--color-primary)'
+                }}>
+                  <Icon size={24} />
+                </div>
+                <div>
+                  <div style={{ 
+                    fontSize: '1.2rem', 
+                    fontWeight: '800', 
+                    color: 'var(--text-primary)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    lineHeight: 1.2
+                  }}>
+                    {stat.prefix && <span style={{ marginRight: '2px' }}>{stat.prefix}</span>}
+                    {stat.value}
+                    {stat.suffix && <span style={{ marginLeft: '1px' }}>{stat.suffix}</span>}
+                  </div>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: '600' }}>
+                    {stat.label}
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
       </div>
 
@@ -251,10 +208,12 @@ export const Hero = ({ onOpenJoinModal }) => {
             grid-template-columns: 1fr !important;
             text-align: center;
           }
-          .hero-grid h1 {
-            font-size: 2.75rem !important;
+          .hero-image-container {
+            justify-content: center !important;
+            padding-right: 0 !important;
+            margin-top: 2rem;
           }
-          .stats-grid {
+          .stats-row {
             grid-template-columns: repeat(2, 1fr) !important;
           }
           .hero-grid p {
@@ -263,6 +222,15 @@ export const Hero = ({ onOpenJoinModal }) => {
           }
           .hero-grid .btn {
             width: 100%;
+          }
+          .hero-grid > div:first-child > div:nth-child(4) {
+            justify-content: center;
+          }
+        }
+        
+        @media (max-width: 640px) {
+          .stats-row {
+            grid-template-columns: 1fr !important;
           }
         }
       `}</style>

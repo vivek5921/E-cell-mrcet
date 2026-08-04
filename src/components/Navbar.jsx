@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTheme } from '../context/useTheme';
-import { Sun, Moon, Rocket, Menu, X, ArrowUpRight } from 'lucide-react';
+import { Sun, Moon, Rocket, Menu, X, ArrowUpRight, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export const Navbar = ({ onOpenJoinModal }) => {
@@ -68,39 +68,48 @@ export const Navbar = ({ onOpenJoinModal }) => {
         <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           
           {/* Brand Logo */}
-          <a href="#hero" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', textDecoration: 'none' }}>
+          <a href="#hero" style={{ display: 'flex', alignItems: 'center', gap: '1rem', textDecoration: 'none' }}>
             <div style={{
               width: '42px',
               height: '42px',
-              borderRadius: '12px',
-              background: 'linear-gradient(135deg, #2563eb 0%, #0f172a 100%)',
+              borderRadius: '50%',
+              overflow: 'hidden',
               display: 'flex',
-              alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 4px 15px rgba(37, 99, 235, 0.4)',
-              color: '#ffffff'
+              alignItems: 'center',
+              background: 'var(--bg-glass-card)',
+              border: '1px solid var(--border-color)',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)'
             }}>
-              <Rocket size={22} className="animate-bounce" />
+              <img 
+                src="/images/logo.png" 
+                alt="E-Cell MRCET Logo" 
+                style={{
+                  width: '85px',
+                  height: 'auto',
+                  minWidth: '85px',
+                  display: 'block'
+                }} 
+              />
             </div>
-            <div>
+            <div style={{ display: 'flex', flexDirection: 'column', marginTop: '2px' }}>
               <span style={{ 
                 fontFamily: 'var(--font-heading)', 
-                fontWeight: '800', 
-                fontSize: '1.4rem', 
-                letterSpacing: '-0.02em',
-                color: 'var(--text-primary)' 
+                fontWeight: '400', 
+                fontSize: '1.3rem', 
+                lineHeight: '1.1',
+                color: 'var(--text-secondary)' 
               }}>
-                E-CELL
+                E CELL
               </span>
               <span style={{ 
-                display: 'block', 
-                fontSize: '0.65rem', 
+                fontFamily: 'var(--font-heading)', 
                 fontWeight: '700', 
-                color: 'var(--color-accent)',
-                letterSpacing: '0.1em',
-                textTransform: 'uppercase'
+                fontSize: '1.3rem', 
+                lineHeight: '1.1',
+                color: 'var(--text-primary)' 
               }}>
-                Innovate & Scale
+                MRCET
               </span>
             </div>
           </a>
@@ -174,7 +183,7 @@ export const Navbar = ({ onOpenJoinModal }) => {
               className="btn btn-primary desktop-btn"
               style={{ padding: '0.65rem 1.4rem', fontSize: '0.9rem' }}
             >
-              Join E-Cell <ArrowUpRight size={16} />
+              Join E-Cell <ArrowRight size={16} />
             </button>
 
             {/* Mobile Menu Button */}
