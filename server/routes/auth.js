@@ -11,6 +11,7 @@ router.get('/status', async (req, res) => {
     const adminCount = await Admin.count();
     res.json({ isSetup: adminCount > 0 });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: 'Server error' });
   }
 });
@@ -30,21 +31,30 @@ router.post('/setup', async (req, res) => {
     });
     res.json({ message: 'Master password set successfully' });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: 'Server error' });
   }
 });
 
 router.post('/login', async (req, res) => {
   try {
-    const { password } = req.body;
-    const admin = await Admin.findOne();
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and password are required' });
+    }
+
+    const admin = await Admin.findOne({ where: { email } });
     if (!admin) {
-      return res.status(401).json({ message: 'Master password not set yet' });
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
+
+    if (!admin.is_active) {
+      return res.status(403).json({ message: 'Account is locked' });
     }
 
     const isValid = await bcrypt.compare(password, admin.password_hash);
     if (!isValid) {
-      return res.status(401).json({ message: 'Invalid master password' });
+      return res.status(401).json({ message: 'Invalid email or password' });
     }
 
     const token = jwt.sign(
@@ -56,7 +66,7 @@ router.post('/login', async (req, res) => {
     res.json({ 
       message: 'Logged in successfully', 
       token,
-      admin: { id: admin.id, role: admin.role } 
+      admin: { id: admin.id, role: admin.role, email: admin.email } 
     });
   } catch (error) {
     console.error(error);

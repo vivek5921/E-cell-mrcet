@@ -16,7 +16,7 @@ export const verifyToken = async (req, res, next) => {
     }
     req.admin = admin;
     next();
-  } catch (err) {
+  } catch {
     return res.status(401).json({ message: 'Unauthorized: Invalid token' });
   }
 };

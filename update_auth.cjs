@@ -29,7 +29,7 @@ files.forEach(file => {
 const dashboardPath = path.join(__dirname, 'src/admin/AdminDashboard.jsx');
 let dbContent = fs.readFileSync(dashboardPath, 'utf8');
 dbContent = dbContent.replace(
-  /await axios\.post\(\`\$\{API_URL\}\/api\/auth\/logout\`, \{\}, \{ headers: \{ Authorization: \`Bearer \$\{localStorage\.getItem\('adminToken'\)\}\` \} \}\);/g,
+  /await axios\.post\(`\$\{API_URL\}\/api\/auth\/logout`, \{\}, \{ headers: \{ Authorization: `Bearer \$\{localStorage\.getItem\('adminToken'\)\}` \} \}\);/g,
   "await axios.post(`${API_URL}/api/auth/logout`, {}, { headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` } });\n      localStorage.removeItem('adminToken');"
 );
 fs.writeFileSync(dashboardPath, dbContent);

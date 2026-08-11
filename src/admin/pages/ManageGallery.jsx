@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { API_URL } from '../../config.js';
 import axios from 'axios';
-import { Trash2 } from 'lucide-react';
+import { Trash2, Edit2, X, Eye } from 'lucide-react';
 
 export const ManageGallery = () => {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({ title: '', category: 'Events', image_url: '' });
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedFiles, setSelectedFiles] = useState([]);
   const [uploadMethod, setUploadMethod] = useState('file');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
-  
-  
+  const [editingId, setEditingId] = useState(null);
+  const [activeImage, setActiveImage] = useState(null); // for lightbox preview
+
   const fetchImages = async () => {
     try {
       const res = await axios.get(`${API_URL}/api/public/gallery`);
@@ -28,10 +29,90 @@ export const ManageGallery = () => {
     fetchImages();
   }, []);
 
-  const handleAdd = async (e) => {
+  const compressImage = (file) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const max_width = 1200;
+          const max_height = 800;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > max_width) {
+              height *= max_width / width;
+              width = max_width;
+            }
+          } else {
+            if (height > max_height) {
+              width *= max_height / height;
+              height = max_height;
+            }
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          canvas.toBlob((blob) => {
+            const compressedFile = new File([blob], file.name, {
+              type: 'image/jpeg',
+              lastModified: Date.now()
+            });
+            resolve(compressedFile);
+          }, 'image/jpeg', 0.7);
+        };
+      };
+    });
+  };
+
+  const handleEditClick = (img) => {
+    setEditingId(img.id);
+    setFormData({
+      title: img.title,
+      category: img.category || 'Events',
+      image_url: img.image_url
+    });
+    setUploadMethod('url');
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setFormData({ title: '', category: 'Events', image_url: '' });
+    setSelectedFiles([]);
+    setUploadMethod('file');
+  };
+
+  const handleSave = async (e) => {
     e.preventDefault();
-    if (uploadMethod === 'file' && !selectedFile) {
-      setError('Please select an image file to upload.');
+    setError('');
+
+    if (editingId) {
+      setSubmitting(true);
+      try {
+        await axios.put(`${API_URL}/api/gallery/${editingId}`, {
+          title: formData.title,
+          category: formData.category,
+          image_url: formData.image_url
+        }, { headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` } });
+        handleCancelEdit();
+        fetchImages();
+      } catch (err) {
+        console.error(err);
+        setError('Failed to update image metadata.');
+      } finally {
+        setSubmitting(false);
+      }
+      return;
+    }
+
+    // Creating new gallery images
+    if (uploadMethod === 'file' && selectedFiles.length === 0) {
+      setError('Please select at least one image file.');
       return;
     }
     if (uploadMethod === 'url' && !formData.image_url) {
@@ -40,36 +121,46 @@ export const ManageGallery = () => {
     }
 
     setSubmitting(true);
-    setError('');
-    
     try {
-      let finalImageUrl = formData.image_url;
-
       if (uploadMethod === 'file') {
-        const uploadData = new FormData();
-        uploadData.append('image', selectedFile);
-        const uploadRes = await axios.post(`${API_URL}/api/upload`, uploadData, {
-          headers: { 'Content-Type': 'multipart/form-data', Authorization: `Bearer ${localStorage.getItem('adminToken')}` }
-        });
-        finalImageUrl = uploadRes.data.url; // Absolute URL from backend
+        // Upload multiple files
+        for (let i = 0; i < selectedFiles.length; i++) {
+          const file = selectedFiles[i];
+          const compressed = await compressImage(file);
+          
+          const uploadData = new FormData();
+          uploadData.append('image', compressed);
+          
+          const uploadRes = await axios.post(`${API_URL}/api/upload`, uploadData, {
+            headers: { 'Content-Type': 'multipart/form-data', Authorization: `Bearer ${localStorage.getItem('adminToken')}` }
+          });
+
+          // Use the file name (without extension) as default title if not specified, or title + index
+          const defaultTitle = selectedFiles.length > 1
+            ? `${formData.title || 'Gallery'} (${i + 1})`
+            : (formData.title || file.name.replace(/\.[^/.]+$/, ""));
+
+          await axios.post(`${API_URL}/api/gallery`, {
+            title: defaultTitle,
+            category: formData.category,
+            image_url: uploadRes.data.url
+          }, { headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` } });
+        }
+      } else {
+        await axios.post(`${API_URL}/api/gallery`, {
+          title: formData.title || 'Gallery Image',
+          category: formData.category,
+          image_url: formData.image_url
+        }, { headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` } });
       }
 
-      await axios.post(`${API_URL}/api/gallery`, {
-        title: formData.title,
-        category: formData.category,
-        image_url: finalImageUrl
-      }, { headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` } });
-      
-      setFormData({ title: '', category: 'Events', image_url: '' });
-      setSelectedFile(null);
-      
+      handleCancelEdit();
       const fileInput = document.getElementById('galleryFileInput');
       if (fileInput) fileInput.value = '';
-      
       fetchImages();
     } catch (err) {
       console.error(err);
-      setError('Failed to add image. Please check the inputs.');
+      setError('Failed to add image(s). Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -85,65 +176,135 @@ export const ManageGallery = () => {
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div style={{ color: 'var(--text-secondary)' }}>Loading Gallery...</div>;
 
   return (
     <div style={{ padding: '2rem', color: 'var(--text-primary)' }}>
       <h2>Manage Gallery</h2>
       
-      <div className="glass-card" style={{ padding: '2rem', marginTop: '2rem' }}>
-        <h3>Add New Image</h3>
-        {error && <div style={{ color: '#ef4444', marginBottom: '1rem' }}>{error}</div>}
-        <form onSubmit={handleAdd} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '1rem' }}>
-          <input type="text" placeholder="Image Title" className="form-input" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} required />
-          <select className="form-input" value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})}>
-            <option>Events</option><option>Workshops</option><option>Campus</option>
-          </select>
-          <select className="form-input" style={{ gridColumn: 'span 2' }} value={uploadMethod} onChange={e => setUploadMethod(e.target.value)}>
-            <option value="file">Upload from Device</option>
-            <option value="url">Paste Image URL</option>
-          </select>
+      <div className="glass-card" style={{ padding: '2rem', marginTop: '2rem', maxWidth: '800px' }}>
+        <h3>{editingId ? 'Edit Image Details' : 'Add New Image(s)'}</h3>
+        {error && <div style={{ color: '#ef4444', marginBottom: '1rem', fontSize: '0.9rem' }}>{error}</div>}
+        
+        <form onSubmit={handleSave} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '1.25rem' }}>
+          <div>
+            <label style={{ display: 'block', fontSize: '0.8rem', marginBottom: '0.3rem' }}>Title/Caption {editingId ? '*' : '(Optional)'}</label>
+            <input type="text" placeholder={editingId ? "Image Title" : "Default title or empty to use filename"} className="form-input" style={{ width: '100%' }} value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} required={!!editingId} />
+          </div>
+          <div>
+            <label style={{ display: 'block', fontSize: '0.8rem', marginBottom: '0.3rem' }}>Category</label>
+            <select className="form-input" style={{ width: '100%' }} value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})}>
+              <option>Meetings</option>
+              <option>Workshops</option>
+              <option>Hackathons</option>
+              <option>Events</option>
+              <option>Campus</option>
+            </select>
+          </div>
           
-          {uploadMethod === 'file' ? (
-            <input 
-              type="file" 
-              id="galleryFileInput"
-              accept="image/*" 
-              className="form-input" 
-              style={{ gridColumn: 'span 2', padding: '0.5rem' }} 
-              onChange={e => setSelectedFile(e.target.files[0])} 
-              required 
-            />
-          ) : (
-            <input 
-              type="text" 
-              placeholder="Image URL (e.g. https://example.com/img.jpg)" 
-              className="form-input" 
-              style={{ gridColumn: 'span 2' }} 
-              value={formData.image_url} 
-              onChange={e => setFormData({...formData, image_url: e.target.value})} 
-              required 
-            />
+          {!editingId && (
+            <div style={{ gridColumn: 'span 2' }}>
+              <label style={{ display: 'block', fontSize: '0.8rem', marginBottom: '0.3rem' }}>Upload Method</label>
+              <select className="form-input" style={{ width: '100%' }} value={uploadMethod} onChange={e => setUploadMethod(e.target.value)}>
+                <option value="file">Upload from Device (Supports Multiple Files & Auto Compression)</option>
+                <option value="url">Paste Image URL</option>
+              </select>
+            </div>
           )}
           
-          <button type="submit" className="btn btn-primary" style={{ gridColumn: 'span 2' }} disabled={submitting}>
-            {submitting ? 'Uploading...' : 'Add Image'}
-          </button>
+          {editingId || uploadMethod === 'url' ? (
+            <div style={{ gridColumn: 'span 2' }}>
+              <label style={{ display: 'block', fontSize: '0.8rem', marginBottom: '0.3rem' }}>Image URL</label>
+              <input 
+                type="text" 
+                placeholder="Image URL (e.g. https://example.com/img.jpg)" 
+                className="form-input" 
+                style={{ width: '100%' }} 
+                value={formData.image_url} 
+                onChange={e => setFormData({...formData, image_url: e.target.value})} 
+                required 
+              />
+            </div>
+          ) : (
+            <div style={{ gridColumn: 'span 2' }}>
+              <label style={{ display: 'block', fontSize: '0.8rem', marginBottom: '0.3rem' }}>Select Image Files</label>
+              <input 
+                type="file" 
+                id="galleryFileInput"
+                accept="image/*" 
+                multiple
+                className="form-input" 
+                style={{ width: '100%', padding: '0.4rem' }} 
+                onChange={e => setSelectedFiles(Array.from(e.target.files))} 
+                required 
+              />
+              {selectedFiles.length > 0 && (
+                <div style={{ fontSize: '0.85rem', color: 'var(--color-primary)', marginTop: '0.4rem', fontWeight: '500' }}>
+                  {selectedFiles.length} file(s) selected for compression & upload.
+                </div>
+              )}
+            </div>
+          )}
+          
+          <div style={{ gridColumn: 'span 2', display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+            <button type="submit" className="btn btn-primary" style={{ flex: 1 }} disabled={submitting}>
+              {submitting ? 'Uploading & Compressing...' : (editingId ? 'Save Changes' : 'Add to Gallery')}
+            </button>
+            {editingId && (
+              <button type="button" className="btn btn-secondary" onClick={handleCancelEdit}>
+                <X size={16} /> Cancel
+              </button>
+            )}
+          </div>
         </form>
       </div>
 
-      <div style={{ marginTop: '2rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem' }}>
-        {images.map(img => (
-          <div key={img.id} className="glass-card" style={{ padding: '1rem', position: 'relative' }}>
-            <img src={img.image_url?.startsWith('http') ? img.image_url : `${API_URL}${img.image_url}`} alt={img.title} style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: 'var(--radius-sm)' }} />
-            <h4 style={{ marginTop: '0.5rem', fontSize: '1rem' }}>{img.title}</h4>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>{img.category}</p>
-            <button onClick={() => handleDelete(img.id)} style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', background: '#ef4444', color: 'white', border: 'none', padding: '0.5rem', borderRadius: '50%', cursor: 'pointer' }}>
-              <Trash2 size={16} />
-            </button>
-          </div>
-        ))}
+      <div style={{ marginTop: '3rem' }}>
+        <h3>Gallery Library ({images.length} Images)</h3>
+        <div style={{ marginTop: '1.25rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '1.5rem' }}>
+          {images.map(img => (
+            <div key={img.id} className="glass-card" style={{ padding: '1rem', position: 'relative', display: 'flex', flexDirection: 'column', height: '240px', justifyContent: 'space-between' }}>
+              <div style={{ height: '140px', overflow: 'hidden', borderRadius: '8px', position: 'relative' }}>
+                <img src={img.image_url?.startsWith('http') ? img.image_url : `${API_URL}${img.image_url}`} alt={img.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <button onClick={() => setActiveImage(img)} style={{ position: 'absolute', bottom: '0.5rem', right: '0.5rem', background: 'rgba(0,0,0,0.6)', border: 'none', borderRadius: '50%', width: '30px', height: '30px', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Eye size={14} />
+                </button>
+              </div>
+              <div>
+                <h4 style={{ margin: '0.5rem 0 0.1rem 0', fontSize: '0.95rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={img.title}>{img.title}</h4>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{img.category}</span>
+                  <div style={{ display: 'flex', gap: '0.2rem' }}>
+                    <button onClick={() => handleEditClick(img)} style={{ background: 'var(--bg-glass-card)', border: 'none', padding: '0.3rem', borderRadius: '4px', cursor: 'pointer', color: 'var(--text-secondary)' }}>
+                      <Edit2 size={13} />
+                    </button>
+                    <button onClick={() => handleDelete(img.id)} style={{ background: '#ef4444', border: 'none', padding: '0.3rem', borderRadius: '4px', cursor: 'pointer', color: '#fff' }}>
+                      <Trash2 size={13} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
+
+      {/* Lightbox Preview */}
+      {activeImage && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.9)', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }} onClick={() => setActiveImage(null)}>
+          <div style={{ position: 'relative', maxWidth: '90%', maxHeight: '90%' }} onClick={e => e.stopPropagation()}>
+            <img src={activeImage.image_url?.startsWith('http') ? activeImage.image_url : `${API_URL}${activeImage.image_url}`} alt={activeImage.title} style={{ maxWidth: '100%', maxHeight: '80vh', objectFit: 'contain', borderRadius: '12px' }} />
+            <button onClick={() => setActiveImage(null)} style={{ position: 'absolute', top: '-2.5rem', right: 0, background: 'transparent', border: 'none', color: '#fff', fontSize: '1.2rem', cursor: 'pointer' }}>
+              <X size={24} />
+            </button>
+            <div style={{ color: '#fff', marginTop: '0.75rem', textAlign: 'center' }}>
+              <h3 style={{ margin: 0 }}>{activeImage.title}</h3>
+              <p style={{ margin: '0.25rem 0 0 0', color: '#cbd5e1', fontSize: '0.9rem' }}>{activeImage.category}</p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
+

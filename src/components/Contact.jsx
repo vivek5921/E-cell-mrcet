@@ -32,7 +32,7 @@ export const Contact = () => {
       setStatus('success');
       setFormData({ name: '', email: '', subject: 'General Inquiry', message: '' });
       setTimeout(() => setStatus(null), 5000);
-    } catch (error) {
+    } catch {
       setStatus('error');
     }
   };

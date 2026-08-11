@@ -12,24 +12,43 @@ export const JoinModal = ({ isOpen, onClose }) => {
     rollNo: '',
     branch: 'Computer Science',
     year: '1st Year',
+    section: '',
+    phone: '',
+    skills: '',
     interest: 'Tech & Product'
   });
-
+  const [resumeFile, setResumeFile] = useState(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   if (!isOpen) return null;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitting(true);
     
     try {
+      let finalResumeUrl = '';
+      if (resumeFile) {
+        const uploadData = new FormData();
+        uploadData.append('image', resumeFile); // backend accepts 'image' key
+        const uploadRes = await axios.post(`${API_URL}/api/upload`, uploadData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        finalResumeUrl = uploadRes.data.url;
+      }
+
       await axios.post(`${API_URL}/api/public/join`, {
         full_name: formData.name,
         email: formData.email,
         roll_number: formData.rollNo,
         department: formData.branch,
         year: formData.year,
-        interests: formData.interest
+        section: formData.section,
+        phone: formData.phone,
+        skills: formData.skills,
+        interests: formData.interest,
+        resume_url: finalResumeUrl
       });
       
       // Trigger confetti fireworks
@@ -48,10 +67,24 @@ export const JoinModal = ({ isOpen, onClose }) => {
       setTimeout(() => {
         setIsSubmitted(false);
         onClose();
+        setFormData({
+          name: '',
+          email: '',
+          rollNo: '',
+          branch: 'Computer Science',
+          year: '1st Year',
+          section: '',
+          phone: '',
+          skills: '',
+          interest: 'Tech & Product'
+        });
+        setResumeFile(null);
       }, 3500);
     } catch (err) {
       console.error(err);
       alert('Failed to register. Please try again.');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -153,48 +186,96 @@ export const JoinModal = ({ isOpen, onClose }) => {
                   />
                 </div>
 
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.35rem' }}>
-                    College Email *
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    placeholder="student@college.edu"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    style={{
-                      width: '100%',
-                      padding: '0.75rem 1rem',
-                      borderRadius: 'var(--radius-sm)',
-                      border: '1px solid var(--border-color)',
-                      background: 'var(--bg-primary)',
-                      color: 'var(--text-primary)',
-                      outline: 'none'
-                    }}
-                  />
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.35rem' }}>
+                      College Email *
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      placeholder="student@college.edu"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      style={{
+                        width: '100%',
+                        padding: '0.75rem 1rem',
+                        borderRadius: 'var(--radius-sm)',
+                        border: '1px solid var(--border-color)',
+                        background: 'var(--bg-primary)',
+                        color: 'var(--text-primary)',
+                        outline: 'none'
+                      }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.35rem' }}>
+                      Phone Number *
+                    </label>
+                    <input
+                      type="tel"
+                      required
+                      placeholder="e.g. 9876543210"
+                      value={formData.phone}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      style={{
+                        width: '100%',
+                        padding: '0.75rem 1rem',
+                        borderRadius: 'var(--radius-sm)',
+                        border: '1px solid var(--border-color)',
+                        background: 'var(--bg-primary)',
+                        color: 'var(--text-primary)',
+                        outline: 'none'
+                      }}
+                    />
+                  </div>
                 </div>
 
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.35rem' }}>
-                    Roll Number *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. 21X41A0501"
-                    value={formData.rollNo}
-                    onChange={(e) => setFormData({ ...formData, rollNo: e.target.value })}
-                    style={{
-                      width: '100%',
-                      padding: '0.75rem 1rem',
-                      borderRadius: 'var(--radius-sm)',
-                      border: '1px solid var(--border-color)',
-                      background: 'var(--bg-primary)',
-                      color: 'var(--text-primary)',
-                      outline: 'none'
-                    }}
-                  />
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.35rem' }}>
+                      Roll Number *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. 21X41A0501"
+                      value={formData.rollNo}
+                      onChange={(e) => setFormData({ ...formData, rollNo: e.target.value })}
+                      style={{
+                        width: '100%',
+                        padding: '0.75rem 1rem',
+                        borderRadius: 'var(--radius-sm)',
+                        border: '1px solid var(--border-color)',
+                        background: 'var(--bg-primary)',
+                        color: 'var(--text-primary)',
+                        outline: 'none'
+                      }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.35rem' }}>
+                      Section *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. CSE-A"
+                      value={formData.section}
+                      onChange={(e) => setFormData({ ...formData, section: e.target.value })}
+                      style={{
+                        width: '100%',
+                        padding: '0.75rem 1rem',
+                        borderRadius: 'var(--radius-sm)',
+                        border: '1px solid var(--border-color)',
+                        background: 'var(--bg-primary)',
+                        color: 'var(--text-primary)',
+                        outline: 'none'
+                      }}
+                    />
+                  </div>
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
@@ -251,6 +332,27 @@ export const JoinModal = ({ isOpen, onClose }) => {
 
                 <div>
                   <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.35rem' }}>
+                    Skills (separated by commas)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. React, Python, UI Design"
+                    value={formData.skills}
+                    onChange={(e) => setFormData({ ...formData, skills: e.target.value })}
+                    style={{
+                      width: '100%',
+                      padding: '0.75rem 1rem',
+                      borderRadius: 'var(--radius-sm)',
+                      border: '1px solid var(--border-color)',
+                      background: 'var(--bg-primary)',
+                      color: 'var(--text-primary)',
+                      outline: 'none'
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.35rem' }}>
                     Primary Domain Interest
                   </label>
                   <select
@@ -274,8 +376,28 @@ export const JoinModal = ({ isOpen, onClose }) => {
                   </select>
                 </div>
 
-                <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '0.75rem', padding: '0.9rem' }}>
-                  Submit Application <Sparkles size={18} />
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.35rem' }}>
+                    Resume (Optional PDF/Word)
+                  </label>
+                  <input
+                    type="file"
+                    accept=".pdf,.doc,.docx"
+                    onChange={(e) => setResumeFile(e.target.files[0])}
+                    style={{
+                      width: '100%',
+                      padding: '0.5rem',
+                      borderRadius: 'var(--radius-sm)',
+                      border: '1px solid var(--border-color)',
+                      background: 'var(--bg-primary)',
+                      color: 'var(--text-secondary)',
+                      outline: 'none'
+                    }}
+                  />
+                </div>
+
+                <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '0.75rem', padding: '0.9rem' }} disabled={submitting}>
+                  {submitting ? 'Submitting Application...' : 'Submit Application'} <Sparkles size={18} />
                 </button>
               </form>
             </>
@@ -296,7 +418,7 @@ export const JoinModal = ({ isOpen, onClose }) => {
               </div>
               <h3 style={{ fontSize: '1.8rem', marginBottom: '0.5rem' }}>Welcome to E-Cell! 🎉</h3>
               <p style={{ color: 'var(--text-secondary)', fontSize: '1.05rem', lineHeight: '1.6' }}>
-                Your membership application has been approved! We sent orientation details to <strong>{formData.email}</strong>.
+                Your membership application has been submitted! We will send updates to <strong>{formData.email}</strong>.
               </p>
             </div>
           )}

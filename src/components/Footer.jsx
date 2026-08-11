@@ -2,10 +2,16 @@ import React from 'react';
 import { Rocket, ArrowUp } from 'lucide-react';
 import { InstagramIcon, LinkedinIcon, TwitterIcon, GithubIcon } from './SocialIcons';
 
-export const Footer = () => {
+export const Footer = ({ settings }) => {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  const email = settings?.email || 'ecell@college.edu';
+  const phone = settings?.phone || 'Mon - Sat: 9:00 AM - 6:00 PM';
+  const linkedin = settings?.social_linkedin || 'https://linkedin.com';
+  const instagram = settings?.social_instagram || 'https://instagram.com';
+  const footerText = settings?.footer_text || '© 2026 E-Cell. All rights reserved.';
 
   return (
     <footer style={{
@@ -50,8 +56,8 @@ export const Footer = () => {
 
             <div style={{ display: 'flex', gap: '0.75rem' }}>
               {[
-                { icon: InstagramIcon, href: 'https://instagram.com' },
-                { icon: LinkedinIcon, href: 'https://linkedin.com' },
+                { icon: InstagramIcon, href: instagram },
+                { icon: LinkedinIcon, href: linkedin },
                 { icon: TwitterIcon, href: 'https://twitter.com' },
                 { icon: GithubIcon, href: 'https://github.com' },
               ].map((s, idx) => {
@@ -116,10 +122,10 @@ export const Footer = () => {
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: '1.6', marginBottom: '1rem' }}>
               Innovation Center, Block C<br />
               College Campus Grounds<br />
-              Mon - Sat: 9:00 AM - 6:00 PM
+              {phone}
             </p>
             <div style={{ fontSize: '0.85rem', color: 'var(--color-primary)', fontWeight: '600' }}>
-              ecell@college.edu
+              {email}
             </div>
           </div>
 
@@ -136,8 +142,9 @@ export const Footer = () => {
           gap: '1rem'
         }}>
           <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
-            © 2026 E-Cell. All rights reserved.
+            {footerText}
           </div>
+
 
           <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: '500', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
             "Powered by Student Innovation" <Rocket size={16} style={{ color: 'var(--color-primary)' }} />

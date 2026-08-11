@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { API_URL } from './config.js';
+import axios from 'axios';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { About } from './components/About';
@@ -14,13 +16,22 @@ import { JoinModal } from './components/JoinModal';
 
 export const MainPage = () => {
   const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
+  const [settings, setSettings] = useState(null);
 
   const handleOpenJoinModal = () => setIsJoinModalOpen(true);
   const handleCloseJoinModal = () => setIsJoinModalOpen(false);
 
+  useEffect(() => {
+    axios.get(`${API_URL}/api/public/settings`)
+      .then(res => {
+        if (res.data) setSettings(res.data);
+      })
+      .catch(console.error);
+  }, []);
+
   return (
     <div className="app-root">
-      <Navbar onOpenJoinModal={handleOpenJoinModal} />
+      <Navbar onOpenJoinModal={handleOpenJoinModal} settings={settings} />
       <main>
         <Hero onOpenJoinModal={handleOpenJoinModal} />
         <About />
@@ -32,8 +43,9 @@ export const MainPage = () => {
         <JoinCommunity onOpenJoinModal={handleOpenJoinModal} />
         <Contact />
       </main>
-      <Footer />
+      <Footer settings={settings} />
       <JoinModal isOpen={isJoinModalOpen} onClose={handleCloseJoinModal} />
     </div>
   );
 };
+

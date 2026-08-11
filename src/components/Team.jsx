@@ -5,12 +5,8 @@ import { Mail, Sparkles } from 'lucide-react';
 import { LinkedinIcon } from './SocialIcons';
 import axios from 'axios';
 
-export const Team = () => {
-  const [selectedRoleFilter, setSelectedRoleFilter] = useState('All');
-  const [teamMembers, setTeamMembers] = useState([]);
-
-  const defaultTeamMembers = [
-    {
+const defaultTeamMembers = [
+  {
       name: 'Dr. Ananya Sharma',
       role: 'Faculty Coordinator',
       teamCategory: 'Faculty',
@@ -96,9 +92,12 @@ export const Team = () => {
       bio: 'Managing event logistics, venue coordination, and hospitality.',
       color: 'linear-gradient(135deg, #8b5cf6, #6d28d9)',
       linkedin: 'https://linkedin.com',
-      email: 'vikram.ops@ecell.org'
-    }
-  ];
+  }
+];
+
+export const Team = () => {
+  const [selectedRoleFilter, setSelectedRoleFilter] = useState('All');
+  const [teamMembers, setTeamMembers] = useState([]);
 
   useEffect(() => {
     axios.get(`${API_URL}/api/public/team`)

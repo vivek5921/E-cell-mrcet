@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useTheme } from '../context/useTheme';
-import { Sun, Moon, Rocket, Menu, X, ArrowUpRight, ArrowRight } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
+import { Sun, Moon, Menu, X, ArrowUpRight, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { API_URL } from '../config.js';
 
-export const Navbar = ({ onOpenJoinModal }) => {
+export const Navbar = ({ onOpenJoinModal, settings }) => {
   const { theme, toggleTheme } = useTheme();
+  const location = useLocation();
+  const isEurekaPage = location.pathname === '/eureka';
   const [scrolled, setScrolled] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -48,6 +52,16 @@ export const Navbar = ({ onOpenJoinModal }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const logoSrc = settings?.logo_url 
+    ? (settings.logo_url.startsWith('http') || (settings.logo_url.startsWith('/') && !settings.logo_url.startsWith('/uploads')) 
+      ? settings.logo_url 
+      : `${API_URL}${settings.logo_url}`) 
+    : '/images/logo.png';
+
+  const brandWords = settings?.website_name ? settings.website_name.split(' ') : ['E CELL', 'MRCET'];
+  const brandWordSecondary = brandWords.slice(0, -1).join(' ') || 'E CELL';
+  const brandWordPrimary = brandWords.slice(-1)[0] || 'MRCET';
+
   return (
     <>
       {/* Scroll Progress Indicator */}
@@ -68,7 +82,7 @@ export const Navbar = ({ onOpenJoinModal }) => {
         <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           
           {/* Brand Logo */}
-          <a href="#hero" style={{ display: 'flex', alignItems: 'center', gap: '1rem', textDecoration: 'none' }}>
+          <a href={isEurekaPage ? '/#hero' : '#hero'} style={{ display: 'flex', alignItems: 'center', gap: '1rem', textDecoration: 'none' }}>
             <div style={{
               width: '42px',
               height: '42px',
@@ -82,7 +96,7 @@ export const Navbar = ({ onOpenJoinModal }) => {
               boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)'
             }}>
               <img 
-                src="/images/logo.png" 
+                src={logoSrc} 
                 alt="E-Cell MRCET Logo" 
                 style={{
                   width: '85px',
@@ -100,7 +114,7 @@ export const Navbar = ({ onOpenJoinModal }) => {
                 lineHeight: '1.1',
                 color: 'var(--text-secondary)' 
               }}>
-                E CELL
+                {brandWordSecondary}
               </span>
               <span style={{ 
                 fontFamily: 'var(--font-heading)', 
@@ -109,19 +123,20 @@ export const Navbar = ({ onOpenJoinModal }) => {
                 lineHeight: '1.1',
                 color: 'var(--text-primary)' 
               }}>
-                MRCET
+                {brandWordPrimary}
               </span>
             </div>
           </a>
 
+
           {/* Desktop Navigation Links */}
           <nav className="desktop-nav" style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
             {navLinks.map((link) => {
-              const isActive = activeSection === link.href.substring(1);
+              const isActive = !isEurekaPage && activeSection === link.href.substring(1);
               return (
                 <a
                   key={link.name}
-                  href={link.href}
+                  href={isEurekaPage ? `/${link.href}` : link.href}
                   style={{
                     textDecoration: 'none',
                     fontFamily: 'var(--font-heading)',
@@ -231,7 +246,7 @@ export const Navbar = ({ onOpenJoinModal }) => {
               {navLinks.map((link) => (
                 <a
                   key={link.name}
-                  href={link.href}
+                  href={isEurekaPage ? `/${link.href}` : link.href}
                   onClick={() => setMobileMenuOpen(false)}
                   style={{
                     textDecoration: 'none',

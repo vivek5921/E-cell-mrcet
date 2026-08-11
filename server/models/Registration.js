@@ -7,10 +7,18 @@ const Registration = sequelize.define('Registration', {
   roll_number: { type: DataTypes.STRING },
   department: { type: DataTypes.STRING },
   year: { type: DataTypes.STRING },
+  section: { type: DataTypes.STRING },
   email: { type: DataTypes.STRING },
   phone: { type: DataTypes.STRING },
+  skills: { type: DataTypes.TEXT },
   interests: { type: DataTypes.TEXT },
+  status: { 
+    type: DataTypes.ENUM('pending', 'accepted', 'rejected'), 
+    defaultValue: 'pending' 
+  },
+  resume_url: { type: DataTypes.STRING },
   submission_date: { type: DataTypes.DATE, defaultValue: DataTypes.NOW }
 });
 
 export default Registration;
+

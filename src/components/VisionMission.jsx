@@ -1,8 +1,28 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { API_URL } from '../config.js';
+import axios from 'axios';
 import { motion } from 'framer-motion';
 import { Eye, Target, Compass, ArrowRight } from 'lucide-react';
 
 export const VisionMission = () => {
+  const [data, setData] = useState({
+    vision: 'To instill an unwavering entrepreneurial mindset among students, encouraging them to identify real-world problems, embrace calculated risks, and build sustainable ventures that shape the future.',
+    mission: 'To construct an inclusive, resource-rich ecosystem where students transform bold ideas into impactful ventures through expert mentorship, incubation access, funding opportunities, and hands-on execution.'
+  });
+
+  useEffect(() => {
+    axios.get(`${API_URL}/api/public/about`)
+      .then(res => {
+        if (res.data) {
+          setData({
+            vision: res.data.vision || 'To instill an unwavering entrepreneurial mindset among students, encouraging them to identify real-world problems, embrace calculated risks, and build sustainable ventures that shape the future.',
+            mission: res.data.mission || 'To construct an inclusive, resource-rich ecosystem where students transform bold ideas into impactful ventures through expert mentorship, incubation access, funding opportunities, and hands-on execution.'
+          });
+        }
+      })
+      .catch(console.error);
+  }, []);
+
   return (
     <section className="section" style={{ position: 'relative' }}>
       <div className="container">
@@ -58,7 +78,7 @@ export const VisionMission = () => {
             </h3>
 
             <p style={{ fontSize: '1.05rem', color: 'var(--text-secondary)', lineHeight: '1.7' }}>
-              To instill an unwavering entrepreneurial mindset among students, encouraging them to identify real-world problems, embrace calculated risks, and build sustainable ventures that shape the future.
+              {data.vision}
             </p>
 
             <div style={{
@@ -115,7 +135,7 @@ export const VisionMission = () => {
             </h3>
 
             <p style={{ fontSize: '1.05rem', color: 'var(--text-secondary)', lineHeight: '1.7' }}>
-              To construct an inclusive, resource-rich ecosystem where students transform bold ideas into impactful ventures through expert mentorship, incubation access, funding opportunities, and hands-on execution.
+              {data.mission}
             </p>
 
             <div style={{
@@ -138,3 +158,4 @@ export const VisionMission = () => {
     </section>
   );
 };
+

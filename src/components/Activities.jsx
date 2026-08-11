@@ -1,15 +1,23 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { API_URL } from '../config.js';
 import { motion } from 'framer-motion';
 import { Calendar, Clock, MapPin, Bell, Check } from 'lucide-react';
 import axios from 'axios';
 
-export const Activities = () => {
-  const [notifiedEvents, setNotifiedEvents] = useState({});
-  const [events, setEvents] = useState([]);
+const eurekaEvent = {
+  id: 'eureka-pitch',
+  title: 'Eureka! Pitching Competition',
+  date: 'SEP 20, 2026',
+  time: '09:00 AM IST Onwards',
+  location: 'Main Seminar Hall & Labs',
+  description: 'The official college-level pitching round for Eureka! - Asia\'s largest business model competition by E-Cell IIT Bombay. Register externally and pitch to win!',
+  category: 'Competition',
+  registration_link: '/eureka'
+};
 
-  const defaultEvents = [
-    {
+const defaultEvents = [
+  {
       id: 'event-1',
       title: 'Startup Awareness Session',
       date: 'AUG 25, 2026',
@@ -53,19 +61,29 @@ export const Activities = () => {
       location: 'Computer Center Lab 5',
       description: 'Hands-on masterclass leveraging generative AI tools, LLM APIs, and automated workflows to accelerate startup building.',
       category: 'Masterclass'
-    }
-  ];
+  }
+];
+
+export const Activities = () => {
+  const [notifiedEvents, setNotifiedEvents] = useState({});
+  const [events, setEvents] = useState([]);
 
   useEffect(() => {
     axios.get(`${API_URL}/api/public/events`)
       .then(res => {
-        if (res.data && res.data.length > 0) {
-          setEvents(res.data);
-        } else {
-          setEvents(defaultEvents);
+        let loaded = res.data || [];
+        if (loaded.length === 0) {
+          loaded = [...defaultEvents];
         }
+        const hasEureka = loaded.some(e => e.id === 'eureka-pitch' || e.title.toLowerCase().includes('eureka'));
+        if (!hasEureka) {
+          loaded = [eurekaEvent, ...loaded];
+        }
+        setEvents(loaded);
       })
-      .catch(() => setEvents(defaultEvents));
+      .catch(() => {
+        setEvents([eurekaEvent, ...defaultEvents]);
+      });
   }, []);
 
   const handleNotifyToggle = (eventId) => {
@@ -198,21 +216,32 @@ export const Activities = () => {
                       Category: <span style={{ color: 'var(--text-primary)' }}>{event.category}</span>
                     </span>
 
-                    <button
-                      onClick={() => handleNotifyToggle(event.id)}
-                      className={`btn ${isNotified ? 'btn-accent' : 'btn-secondary'}`}
-                      style={{ padding: '0.5rem 1.1rem', fontSize: '0.85rem' }}
-                    >
-                      {isNotified ? (
-                        <>
-                          <Check size={14} /> Reminder Set
-                        </>
-                      ) : (
-                        <>
-                          <Bell size={14} /> Remind Me
-                        </>
+                    <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                      {event.registration_link && (
+                        <Link
+                          to={event.registration_link}
+                          className="btn btn-primary"
+                          style={{ padding: '0.5rem 1.1rem', fontSize: '0.85rem', textDecoration: 'none' }}
+                        >
+                          Details & Register
+                        </Link>
                       )}
-                    </button>
+                      <button
+                        onClick={() => handleNotifyToggle(event.id)}
+                        className={`btn ${isNotified ? 'btn-accent' : 'btn-secondary'}`}
+                        style={{ padding: '0.5rem 1.1rem', fontSize: '0.85rem' }}
+                      >
+                        {isNotified ? (
+                          <>
+                            <Check size={14} /> Reminder Set
+                          </>
+                        ) : (
+                          <>
+                            <Bell size={14} /> Remind Me
+                          </>
+                        )}
+                      </button>
+                    </div>
                   </div>
 
                 </motion.div>

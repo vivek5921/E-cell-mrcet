@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { API_URL } from '../../config.js';
 import axios from 'axios';
-import { Trash2, CheckCircle } from 'lucide-react';
+import { Trash2, CheckCircle, Mail } from 'lucide-react';
 
 export const ManageMessages = () => {
   const [messages, setMessages] = useState([]);
@@ -41,7 +41,7 @@ export const ManageMessages = () => {
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div style={{ color: 'var(--text-secondary)' }}>Loading Messages...</div>;
 
   return (
     <div style={{ padding: '2rem', color: 'var(--text-primary)' }}>
@@ -55,13 +55,21 @@ export const ManageMessages = () => {
                 <h4 style={{ margin: 0 }}>{msg.name} ({msg.email})</h4>
                 <small style={{ color: 'var(--text-muted)' }}>{new Date(msg.date).toLocaleString()}</small>
               </div>
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                <a 
+                  href={`mailto:${msg.email}?subject=Re: ${encodeURIComponent(msg.subject || 'E-Cell MRCET')}&body=Hello ${encodeURIComponent(msg.name)},%0D%0A%0D%0A`}
+                  className="btn btn-secondary" 
+                  style={{ padding: '0.5rem', background: '#3b82f6', color: 'white', border: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }} 
+                  title="Reply Email"
+                >
+                  <Mail size={16} />
+                </a>
                 {!msg.is_read && (
-                  <button onClick={() => handleMarkRead(msg.id)} className="btn btn-secondary" style={{ padding: '0.5rem', background: '#22c55e', color: 'white', border: 'none' }} title="Mark as Read">
+                  <button onClick={() => handleMarkRead(msg.id)} className="btn btn-secondary" style={{ padding: '0.5rem', background: '#22c55e', color: 'white', border: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }} title="Mark as Read">
                     <CheckCircle size={16} />
                   </button>
                 )}
-                <button onClick={() => handleDelete(msg.id)} className="btn btn-secondary" style={{ padding: '0.5rem', background: '#ef4444', color: 'white', border: 'none' }} title="Delete">
+                <button onClick={() => handleDelete(msg.id)} className="btn btn-secondary" style={{ padding: '0.5rem', background: '#ef4444', color: 'white', border: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }} title="Delete">
                   <Trash2 size={16} />
                 </button>
               </div>
@@ -74,3 +82,4 @@ export const ManageMessages = () => {
     </div>
   );
 };
+

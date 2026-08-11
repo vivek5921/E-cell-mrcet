@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { API_URL } from '../config.js';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, X, Key, CheckCircle } from 'lucide-react';
+import { Shield, X, Key, Mail } from 'lucide-react';
 import axios from 'axios';
 import { AdminDashboard } from './AdminDashboard';
 
 export const HiddenAdminGate = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isSetup, setIsSetup] = useState(null); // null = checking, true = already setup, false = needs setup
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -34,10 +34,11 @@ export const HiddenAdminGate = () => {
 
     try {
       // Always attempt to login. The setup phase is removed.
-      const res = await axios.post(`${API_URL}/api/auth/login`, { password });
+      const res = await axios.post(`${API_URL}/api/auth/login`, { email, password });
       localStorage.setItem('adminToken', res.data.token);
       setIsAuthenticated(true);
       setPassword('');
+      setEmail('');
     } catch (err) {
       setError(err.response?.data?.message || 'Authentication failed');
     } finally {
@@ -57,7 +58,9 @@ export const HiddenAdminGate = () => {
               headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` }
             });
             localStorage.removeItem('adminToken');
-          } catch (e) {}
+          } catch (e) {
+            console.error(e);
+          }
         }} style={{ position: 'absolute', top: '1rem', right: '1rem', zIndex: 10000, background: '#ef4444', color: 'white', border: 'none', borderRadius: '50%', width: '40px', height: '40px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(0,0,0,0.3)' }}>
           <X size={20} />
         </button>
@@ -94,12 +97,25 @@ export const HiddenAdminGate = () => {
               Admin Authentication
             </h2>
             <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem', fontSize: '0.9rem' }}>
-              Enter your master password to access the CMS.
+              Enter your credentials to access the CMS.
             </p>
 
             {error && <div style={{ color: '#ef4444', marginBottom: '1rem', fontSize: '0.85rem' }}>{error}</div>}
 
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div style={{ position: 'relative' }}>
+                <Mail size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                <input
+                  type="email"
+                  placeholder="Admin Email"
+                  className="form-input"
+                  style={{ paddingLeft: '2.5rem', width: '100%', textAlign: 'center' }}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  autoFocus
+                  required
+                />
+              </div>
               <div style={{ position: 'relative' }}>
                 <Key size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
                 <input
@@ -109,7 +125,6 @@ export const HiddenAdminGate = () => {
                   style={{ paddingLeft: '2.5rem', width: '100%', textAlign: 'center' }}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  autoFocus
                   required
                 />
               </div>

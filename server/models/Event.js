@@ -11,7 +11,9 @@ const Event = sequelize.define('Event', {
   category: { type: DataTypes.STRING },
   poster_url: { type: DataTypes.STRING },
   registration_link: { type: DataTypes.STRING },
+  google_maps_url: { type: DataTypes.STRING },
   status: { type: DataTypes.ENUM('upcoming', 'ongoing', 'completed'), defaultValue: 'upcoming' }
 });
 
 export default Event;
+

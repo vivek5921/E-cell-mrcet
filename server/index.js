@@ -77,7 +77,14 @@ const seedDatabase = async () => {
 };
 
 // Start Server
-app.listen(PORT, async () => {
-  console.log(`Server running on port ${PORT}`);
-  await seedDatabase();
-});
+if (process.env.NODE_ENV !== 'test' && !process.env.VERCEL) {
+  app.listen(PORT, async () => {
+    console.log(`Server running on port ${PORT}`);
+    await seedDatabase();
+  });
+} else {
+  seedDatabase().catch(err => console.error('Database sync error in serverless environment:', err));
+}
+
+export default app;
+
