@@ -56,6 +56,7 @@ export const Gallery = () => {
                 <img
                   src={item.image_url?.startsWith('http') ? item.image_url : `${API_URL}${item.image_url}`}
                   alt={item.title}
+                  onError={(e) => { e.target.src = 'https://placehold.co/600x400/1e293b/334155?text=Image+Unavailable'; }}
                   style={{
                     width: '100%',
                     height: '100%',
@@ -186,6 +187,7 @@ export const Gallery = () => {
               <img
                 src={activeImage.image_url?.startsWith('http') ? activeImage.image_url : `${API_URL}${activeImage.image_url}`}
                 alt={activeImage.title}
+                onError={(e) => { e.target.src = 'https://placehold.co/600x400/1e293b/334155?text=Image+Unavailable'; }}
                 style={{ width: '100%', maxHeight: '500px', objectFit: 'cover', display: 'block' }}
               />
 

@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import React, { useState, useEffect } from 'react';
 import { API_URL } from '../../config.js';
 import axios from 'axios';
@@ -89,7 +90,7 @@ export const ManageTeam = () => {
       fetchTeam();
     } catch (err) {
       console.error(err);
-      alert('Failed to save team member details');
+      toast.error('Failed to save team member details');
     } finally {
       setSubmitting(false);
     }

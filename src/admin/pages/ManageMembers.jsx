@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import React, { useState, useEffect } from 'react';
 import { API_URL } from '../../config.js';
 import axios from 'axios';
@@ -34,7 +35,7 @@ export const ManageMembers = () => {
       fetchMembers();
     } catch (err) {
       console.error(err);
-      alert('Failed to update member status');
+      toast.error('Failed to update member status');
     }
   };
 

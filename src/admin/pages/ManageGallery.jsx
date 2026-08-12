@@ -265,7 +265,7 @@ export const ManageGallery = () => {
           {images.map(img => (
             <div key={img.id} className="glass-card" style={{ padding: '1rem', position: 'relative', display: 'flex', flexDirection: 'column', height: '240px', justifyContent: 'space-between' }}>
               <div style={{ height: '140px', overflow: 'hidden', borderRadius: '8px', position: 'relative' }}>
-                <img src={img.image_url?.startsWith('http') ? img.image_url : `${API_URL}${img.image_url}`} alt={img.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <img src={img.image_url?.startsWith('http') ? img.image_url : `${API_URL}${img.image_url}`} alt={img.title} onError={(e) => { e.target.src = 'https://placehold.co/600x400/1e293b/334155?text=Image+Unavailable'; }} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 <button onClick={() => setActiveImage(img)} style={{ position: 'absolute', bottom: '0.5rem', right: '0.5rem', background: 'rgba(0,0,0,0.6)', border: 'none', borderRadius: '50%', width: '30px', height: '30px', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Eye size={14} />
                 </button>
@@ -293,7 +293,7 @@ export const ManageGallery = () => {
       {activeImage && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.9)', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }} onClick={() => setActiveImage(null)}>
           <div style={{ position: 'relative', maxWidth: '90%', maxHeight: '90%' }} onClick={e => e.stopPropagation()}>
-            <img src={activeImage.image_url?.startsWith('http') ? activeImage.image_url : `${API_URL}${activeImage.image_url}`} alt={activeImage.title} style={{ maxWidth: '100%', maxHeight: '80vh', objectFit: 'contain', borderRadius: '12px' }} />
+            <img src={activeImage.image_url?.startsWith('http') ? activeImage.image_url : `${API_URL}${activeImage.image_url}`} alt={activeImage.title} onError={(e) => { e.target.src = 'https://placehold.co/600x400/1e293b/334155?text=Image+Unavailable'; }} style={{ maxWidth: '100%', maxHeight: '80vh', objectFit: 'contain', borderRadius: '12px' }} />
             <button onClick={() => setActiveImage(null)} style={{ position: 'absolute', top: '-2.5rem', right: 0, background: 'transparent', border: 'none', color: '#fff', fontSize: '1.2rem', cursor: 'pointer' }}>
               <X size={24} />
             </button>

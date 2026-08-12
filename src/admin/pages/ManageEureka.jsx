@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import React, { useState, useEffect } from 'react';
 import { API_URL } from '../../config.js';
 import axios from 'axios';
@@ -96,7 +97,7 @@ export const ManageEureka = () => {
         setRidSearch('');
       }
     } catch (err) {
-      alert(err.response?.data?.message || 'No team found with this RID.');
+      toast.error(err.response?.data?.message || 'No team found with this RID.');
     }
   };
 
@@ -129,14 +130,14 @@ export const ManageEureka = () => {
       }, {
         headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` }
       });
-      alert('Team status & notes updated successfully.');
+      toast.success('Team status & notes updated successfully.');
       setSelectedTeam(res.data.team);
       // Reload lists
       fetchTeams();
       fetchStats();
     } catch (err) {
       console.error(err);
-      alert('Failed to save team details.');
+      toast.error('Failed to save team details.');
     } finally {
       setSavingNotes(false);
     }
@@ -168,10 +169,10 @@ export const ManageEureka = () => {
       });
       setTeamScores(scoreRes.data);
       fetchTeams(); // Reload average in main list
-      alert('Score entered successfully.');
+      toast.success('Score entered successfully.');
     } catch (err) {
       console.error(err);
-      alert(err.response?.data?.message || 'Failed to submit score.');
+      toast.error(err.response?.data?.message || 'Failed to submit score.');
     } finally {
       setSubmittingScore(false);
     }
@@ -188,10 +189,10 @@ export const ManageEureka = () => {
         setSelectedTeam(null);
       }
       loadAllData();
-      alert('Team deleted successfully.');
+      toast.success('Team deleted successfully.');
     } catch (err) {
       console.error(err);
-      alert('Failed to delete team.');
+      toast.error('Failed to delete team.');
     }
   };
 
@@ -212,10 +213,10 @@ export const ManageEureka = () => {
       setJudgeEmail('');
       setJudgeSpec('');
       fetchJudges();
-      alert('Judge added successfully.');
+      toast.success('Judge added successfully.');
     } catch (err) {
       console.error(err);
-      alert('Failed to add judge.');
+      toast.error('Failed to add judge.');
     } finally {
       setSubmittingJudge(false);
     }
@@ -230,7 +231,7 @@ export const ManageEureka = () => {
       });
       fetchJudges();
       fetchTeams(); // Reload team score list since scores will change
-      alert('Judge deleted.');
+      toast.success('Judge deleted.');
     } catch (err) {
       console.error(err);
     }

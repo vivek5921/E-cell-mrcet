@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import React, { useState, useEffect } from 'react';
 import { API_URL } from '../../config.js';
 import axios from 'axios';
@@ -113,7 +114,7 @@ export const ManageEvents = () => {
       fetchEvents();
     } catch (err) {
       console.error(err);
-      alert('Failed to save event details');
+      toast.error('Failed to save event details');
     } finally {
       setSubmitting(false);
     }

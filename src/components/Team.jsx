@@ -213,7 +213,7 @@ export const Team = () => {
                 border: '3px solid var(--bg-primary)'
               }}>
                 {member.image_url ? (
-                  <img src={member.image_url.startsWith('http') ? member.image_url : `${API_URL}${member.image_url}`} alt={member.name} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+                  <img src={member.image_url.startsWith('http') ? member.image_url : `${API_URL}${member.image_url}`} alt={member.name} onError={(e) => { e.target.src = 'https://placehold.co/400x400/1e293b/334155?text=No+Photo'; }} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
                 ) : (
                   member.initials
                 )}

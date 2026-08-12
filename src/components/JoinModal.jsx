@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import React, { useState } from 'react';
 import { API_URL } from '../config.js';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -82,7 +83,7 @@ export const JoinModal = ({ isOpen, onClose }) => {
       }, 3500);
     } catch (err) {
       console.error(err);
-      alert('Failed to register. Please try again.');
+      toast.error('Failed to register. Please try again.');
     } finally {
       setSubmitting(false);
     }

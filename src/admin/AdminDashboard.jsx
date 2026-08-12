@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import React, { useEffect, useState } from 'react';
 import { API_URL } from '../config.js';
 import axios from 'axios';
@@ -155,7 +156,7 @@ const ManageAbout = () => {
       setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
       console.error(err);
-      alert('Failed to update About content');
+      toast.error('Failed to update About content');
     } finally {
       setSaving(false);
     }
@@ -224,7 +225,7 @@ const ManageSettings = () => {
       setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
       console.error(err);
-      alert('Failed to update Settings');
+      toast.error('Failed to update Settings');
     } finally {
       setSaving(false);
     }
@@ -321,7 +322,7 @@ const ManageAdmins = () => {
       fetchAdmins();
     } catch (err) {
       console.error(err);
-      alert(err.response?.data?.message || 'Failed to create admin');
+      toast.error(err.response?.data?.message || 'Failed to create admin');
     } finally {
       setSubmitting(false);
     }
@@ -335,7 +336,7 @@ const ManageAdmins = () => {
       fetchAdmins();
     } catch (err) {
       console.error(err);
-      alert('Failed to lock/unlock admin');
+      toast.error('Failed to lock/unlock admin');
     }
   };
 
@@ -346,10 +347,10 @@ const ManageAdmins = () => {
       await axios.put(`${API_URL}/api/admins/${id}/reset`, { password: newPass }, {
         headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` }
       });
-      alert('Password reset successful');
+      toast.success('Password reset successful');
     } catch (err) {
       console.error(err);
-      alert('Failed to reset password');
+      toast.error('Failed to reset password');
     }
   };
 
@@ -362,7 +363,7 @@ const ManageAdmins = () => {
       fetchAdmins();
     } catch (err) {
       console.error(err);
-      alert('Failed to delete admin');
+      toast.error('Failed to delete admin');
     }
   };
 
