@@ -44,6 +44,12 @@ app.use('/uploads', express.static(uploadsDir));
 app.use('/api/auth', authRoutes);
 app.use('/api', apiRoutes);
 
+// Error handling middleware
+app.use((err, req, res, _next) => {
+  console.error('Unhandled Server Error:', err);
+  res.status(500).json({ message: err.message || 'Internal Server Error' });
+});
+
 // Seed Database
 const seedDatabase = async () => {
   try {

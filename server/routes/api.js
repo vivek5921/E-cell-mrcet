@@ -31,12 +31,16 @@ const transporter = nodemailer.createTransport({
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Configure Cloudinary
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET
-});
+// Configure Cloudinary (Supports both CLOUDINARY_URL connection string and individual keys)
+if (process.env.CLOUDINARY_URL) {
+  cloudinary.config();
+} else {
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+  });
+}
 
 // Setup Multer for image uploads to Cloudinary
 const storage = new CloudinaryStorage({
