@@ -1,5 +1,7 @@
 import express from 'express';
 import multer from 'multer';
+import { v2 as cloudinary } from 'cloudinary';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import bcrypt from 'bcrypt';
@@ -29,18 +31,49 @@ const transporter = nodemailer.createTransport({
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Cloudinary configuration removed (local storage fallback active)
+// Check if Cloudinary environment variables are set
+const isCloudinaryConfigured = !!(
+  process.env.CLOUDINARY_URL ||
+  (process.env.CLOUDINARY_CLOUD_NAME &&
+   process.env.CLOUDINARY_API_KEY &&
+   process.env.CLOUDINARY_API_SECRET)
+);
 
-// Setup Multer for local disk storage
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, '../uploads'));
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, uniqueSuffix + path.extname(file.originalname));
+let storage;
+
+if (isCloudinaryConfigured) {
+  if (process.env.CLOUDINARY_URL) {
+    cloudinary.config();
+  } else {
+    cloudinary.config({
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET
+    });
   }
-});
+
+  storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+      folder: 'ecell_uploads',
+      allowed_formats: ['jpg', 'png', 'jpeg', 'webp', 'gif']
+    }
+  });
+  console.log('Multer configured to use Cloudinary for image uploads.');
+} else {
+  // Setup Multer for local disk storage fallback
+  storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, path.join(__dirname, '../uploads'));
+    },
+    filename: (req, file, cb) => {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+      cb(null, uniqueSuffix + path.extname(file.originalname));
+    }
+  });
+  console.log('Multer configured to use local disk storage.');
+}
+
 const upload = multer({ storage: storage });
 
 // ==========================================
@@ -301,7 +334,8 @@ router.use(verifyToken);
 // Upload endpoint
 router.post('/upload', upload.single('image'), (req, res) => {
   if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
-  const url = `/uploads/${req.file.filename}`;
+  // Cloudinary storage returns the full URL in req.file.path. Local disk storage returns req.file.filename.
+  const url = isCloudinaryConfigured ? req.file.path : `/uploads/${req.file.filename}`;
   res.json({ url });
 });
 
