@@ -399,51 +399,53 @@ const ManageAdmins = () => {
       {/* List */}
       <div style={{ marginTop: '2.5rem', maxWidth: '850px' }}>
         <h3>Current System Accounts</h3>
-        <table style={{ width: '100%', marginTop: '1rem', borderCollapse: 'collapse', background: 'var(--bg-primary)', borderRadius: '12px', overflow: 'hidden' }}>
-          <thead>
-            <tr style={{ background: 'var(--color-primary-light)', borderBottom: '1px solid var(--border-color)', textAlign: 'left' }}>
-              <th style={{ padding: '1rem', color: 'var(--color-primary)' }}>Email</th>
-              <th style={{ padding: '1rem', color: 'var(--color-primary)' }}>Role</th>
-              <th style={{ padding: '1rem', color: 'var(--color-primary)' }}>Status</th>
-              <th style={{ padding: '1rem', color: 'var(--color-primary)' }}>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {admins.map(usr => (
-              <tr key={usr.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
-                <td style={{ padding: '1rem', fontWeight: '500' }}>{usr.email}</td>
-                <td style={{ padding: '1rem' }}>
-                  <span style={{
-                    padding: '0.2rem 0.6rem', fontSize: '0.8rem', borderRadius: '4px', fontWeight: '600',
-                    background: usr.role === 'super_admin' ? 'rgba(139, 92, 246, 0.15)' : 'rgba(59, 130, 246, 0.15)',
-                    color: usr.role === 'super_admin' ? '#a78bfa' : '#60a5fa'
-                  }}>{usr.role}</span>
-                </td>
-                <td style={{ padding: '1rem' }}>
-                  <span style={{ color: usr.is_active ? '#10b981' : '#ef4444', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                    {usr.is_active ? <Unlock size={14} /> : <Lock size={14} />}
-                    {usr.is_active ? 'Active' : 'Locked'}
-                  </span>
-                </td>
-                <td style={{ padding: '1rem', display: 'flex', gap: '0.5rem' }}>
-                  {usr.role !== 'super_admin' && (
-                    <>
-                      <button onClick={() => handleToggleActive(usr.id)} className="btn btn-secondary" style={{ padding: '0.4rem', border: 'none', background: usr.is_active ? '#ef4444' : '#10b981', color: '#fff' }} title={usr.is_active ? 'Lock Admin' : 'Unlock Admin'}>
-                        {usr.is_active ? <Lock size={15} /> : <Unlock size={15} />}
-                      </button>
-                      <button onClick={() => handleDelete(usr.id)} className="btn btn-secondary" style={{ padding: '0.4rem', border: 'none', background: '#e11d48', color: '#fff' }} title="Delete Admin">
-                        <Trash2 size={15} />
-                      </button>
-                    </>
-                  )}
-                  <button onClick={() => handleResetPassword(usr.id)} className="btn btn-secondary" style={{ padding: '0.4rem', border: 'none', background: 'var(--bg-glass-card)' }} title="Reset Password">
-                    <Key size={15} />
-                  </button>
-                </td>
+        <div style={{ overflowX: 'auto', marginTop: '1rem', borderRadius: '12px' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', background: 'var(--bg-primary)', overflow: 'hidden' }}>
+            <thead>
+              <tr style={{ background: 'var(--color-primary-light)', borderBottom: '1px solid var(--border-color)', textAlign: 'left' }}>
+                <th style={{ padding: '1rem', color: 'var(--color-primary)' }}>Email</th>
+                <th style={{ padding: '1rem', color: 'var(--color-primary)' }}>Role</th>
+                <th style={{ padding: '1rem', color: 'var(--color-primary)' }}>Status</th>
+                <th style={{ padding: '1rem', color: 'var(--color-primary)' }}>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {admins.map(usr => (
+                <tr key={usr.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
+                  <td style={{ padding: '1rem', fontWeight: '500' }}>{usr.email}</td>
+                  <td style={{ padding: '1rem' }}>
+                    <span style={{
+                      padding: '0.2rem 0.6rem', fontSize: '0.8rem', borderRadius: '4px', fontWeight: '600',
+                      background: usr.role === 'super_admin' ? 'rgba(139, 92, 246, 0.15)' : 'rgba(59, 130, 246, 0.15)',
+                      color: usr.role === 'super_admin' ? '#a78bfa' : '#60a5fa'
+                    }}>{usr.role}</span>
+                  </td>
+                  <td style={{ padding: '1rem' }}>
+                    <span style={{ color: usr.is_active ? '#10b981' : '#ef4444', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                      {usr.is_active ? <Unlock size={14} /> : <Lock size={14} />}
+                      {usr.is_active ? 'Active' : 'Locked'}
+                    </span>
+                  </td>
+                  <td style={{ padding: '1rem', display: 'flex', gap: '0.5rem' }}>
+                    {usr.role !== 'super_admin' && (
+                      <>
+                        <button onClick={() => handleToggleActive(usr.id)} className="btn btn-secondary" style={{ padding: '0.4rem', border: 'none', background: usr.is_active ? '#ef4444' : '#10b981', color: '#fff' }} title={usr.is_active ? 'Lock Admin' : 'Unlock Admin'}>
+                          {usr.is_active ? <Lock size={15} /> : <Unlock size={15} />}
+                        </button>
+                        <button onClick={() => handleDelete(usr.id)} className="btn btn-secondary" style={{ padding: '0.4rem', border: 'none', background: '#e11d48', color: '#fff' }} title="Delete Admin">
+                          <Trash2 size={15} />
+                        </button>
+                      </>
+                    )}
+                    <button onClick={() => handleResetPassword(usr.id)} className="btn btn-secondary" style={{ padding: '0.4rem', border: 'none', background: 'var(--bg-glass-card)' }} title="Reset Password">
+                      <Key size={15} />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
@@ -521,11 +523,11 @@ export const AdminDashboard = () => {
   };
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--bg-secondary)', width: '100%', fontFamily: 'var(--font-sans)' }}>
+    <div style={{ display: 'flex', height: '100vh', maxHeight: '100vh', width: '100vw', overflow: 'hidden', background: 'var(--bg-secondary)', fontFamily: 'var(--font-sans)' }}>
       {/* Innovative Sidebar */}
       <motion.div 
         initial={{ x: -250 }} animate={{ x: 0 }} transition={{ type: 'spring', stiffness: 100, damping: 20 }}
-        style={{ width: '280px', background: 'var(--bg-glass-card)', backdropFilter: 'blur(20px)', borderRight: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', boxShadow: '4px 0 24px rgba(0,0,0,0.1)' }}
+        style={{ width: '280px', flexShrink: 0, height: '100%', background: 'var(--bg-glass-card)', backdropFilter: 'blur(20px)', borderRight: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', boxShadow: '4px 0 24px rgba(0,0,0,0.1)' }}
       >
         <div style={{ padding: '2.5rem 2rem', borderBottom: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: 'linear-gradient(135deg, var(--color-primary), var(--color-accent))', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 'bold', fontSize: '1.2rem', boxShadow: '0 4px 12px rgba(37,99,235,0.4)' }}>
@@ -582,7 +584,7 @@ export const AdminDashboard = () => {
       </motion.div>
 
       {/* Main Content Area */}
-      <div style={{ flex: 1, overflowY: 'auto', position: 'relative' }}>
+      <div style={{ flex: 1, height: '100%', overflowY: 'auto', position: 'relative' }}>
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}

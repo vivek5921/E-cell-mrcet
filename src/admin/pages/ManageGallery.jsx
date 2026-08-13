@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { API_URL } from '../../config.js';
 import axios from 'axios';
-import { Trash2, Edit2, X, Eye } from 'lucide-react';
+import { Trash2, Edit2, X, Eye, Image as ImageIcon } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 export const ManageGallery = () => {
   const [images, setImages] = useState([]);
@@ -176,7 +177,15 @@ export const ManageGallery = () => {
     }
   };
 
-  if (loading) return <div style={{ color: 'var(--text-secondary)' }}>Loading Gallery...</div>;
+  if (loading) return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '300px', width: '100%' }}>
+      <motion.div 
+        animate={{ rotate: 360 }} 
+        transition={{ repeat: Infinity, duration: 1, ease: "linear" }} 
+        style={{ width: '40px', height: '40px', border: '3px solid var(--color-primary-light)', borderTopColor: 'var(--color-primary)', borderRadius: '50%' }} 
+      />
+    </div>
+  );
 
   return (
     <div style={{ padding: '2rem', color: 'var(--text-primary)' }}>
@@ -261,56 +270,64 @@ export const ManageGallery = () => {
 
       <div style={{ marginTop: '3rem' }}>
         <h3>Gallery Library ({images.length} Images)</h3>
-        <div style={{ marginTop: '1.25rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '1.5rem' }}>
-          {images.map(img => (
-            <div key={img.id} className="glass-card" style={{ padding: '0.75rem', position: 'relative', borderRadius: '12px', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-              <div style={{ height: '145px', overflow: 'hidden', borderRadius: '8px', position: 'relative' }}>
-                <img 
-                  src={img.image_url?.startsWith('http') ? img.image_url : `${API_URL}${img.image_url}`} 
-                  alt={img.title} 
-                  onError={(e) => { e.target.src = 'https://placehold.co/600x400/1e293b/334155?text=Image+Unavailable'; }} 
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
-                />
+        {images.length === 0 ? (
+          <div className="glass-card" style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-secondary)', marginTop: '1.25rem', maxWidth: '800px' }}>
+            <ImageIcon size={48} style={{ margin: '0 auto 1rem auto', opacity: 0.5, display: 'block', color: 'var(--color-primary)' }} />
+            <p style={{ fontWeight: '500', fontSize: '1.1rem' }}>No images found in library</p>
+            <p style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>Upload images using the form above to get started.</p>
+          </div>
+        ) : (
+          <div style={{ marginTop: '1.25rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '1.5rem' }}>
+            {images.map(img => (
+              <div key={img.id} className="glass-card" style={{ padding: '0.75rem', position: 'relative', borderRadius: '12px', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <div style={{ height: '145px', overflow: 'hidden', borderRadius: '8px', position: 'relative' }}>
+                  <img 
+                    src={img.image_url?.startsWith('http') ? img.image_url : `${API_URL}${img.image_url}`} 
+                    alt={img.title} 
+                    onError={(e) => { e.target.src = 'https://placehold.co/600x400/1e293b/334155?text=Image+Unavailable'; }} 
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                  />
+                  
+                  {/* Edit Button - Top Left */}
+                  <button 
+                    onClick={() => handleEditClick(img)} 
+                    style={{ position: 'absolute', top: '0.5rem', left: '0.5rem', background: 'rgba(255,255,255,0.9)', border: 'none', borderRadius: '50%', width: '28px', height: '28px', color: '#1e293b', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
+                    title="Edit Details"
+                  >
+                    <Edit2 size={13} />
+                  </button>
+  
+                  {/* Delete Button - Top Right */}
+                  <button 
+                    onClick={() => handleDelete(img.id)} 
+                    style={{ position: 'absolute', top: '0.5rem', right: '0.5rem', background: '#ef4444', border: 'none', borderRadius: '50%', width: '28px', height: '28px', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
+                    title="Delete Image"
+                  >
+                    <Trash2 size={13} />
+                  </button>
+  
+                  {/* Preview Button - Bottom Right */}
+                  <button 
+                    onClick={() => setActiveImage(img)} 
+                    style={{ position: 'absolute', bottom: '0.5rem', right: '0.5rem', background: 'rgba(0,0,0,0.7)', border: 'none', borderRadius: '50%', width: '28px', height: '28px', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
+                    title="Preview"
+                  >
+                    <Eye size={13} />
+                  </button>
+                </div>
                 
-                {/* Edit Button - Top Left */}
-                <button 
-                  onClick={() => handleEditClick(img)} 
-                  style={{ position: 'absolute', top: '0.5rem', left: '0.5rem', background: 'rgba(255,255,255,0.9)', border: 'none', borderRadius: '50%', width: '28px', height: '28px', color: '#1e293b', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
-                  title="Edit Details"
-                >
-                  <Edit2 size={13} />
-                </button>
-
-                {/* Delete Button - Top Right */}
-                <button 
-                  onClick={() => handleDelete(img.id)} 
-                  style={{ position: 'absolute', top: '0.5rem', right: '0.5rem', background: '#ef4444', border: 'none', borderRadius: '50%', width: '28px', height: '28px', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
-                  title="Delete Image"
-                >
-                  <Trash2 size={13} />
-                </button>
-
-                {/* Preview Button - Bottom Right */}
-                <button 
-                  onClick={() => setActiveImage(img)} 
-                  style={{ position: 'absolute', bottom: '0.5rem', right: '0.5rem', background: 'rgba(0,0,0,0.7)', border: 'none', borderRadius: '50%', width: '28px', height: '28px', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
-                  title="Preview"
-                >
-                  <Eye size={13} />
-                </button>
-              </div>
-              
-              <div style={{ padding: '0.1rem 0.25rem 0.25rem 0.25rem' }}>
-                <h4 style={{ margin: 0, fontSize: '0.9rem', fontWeight: '600', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={img.title}>
-                  {img.title}
-                </h4>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.15rem' }}>
-                  {img.category}
+                <div style={{ padding: '0.1rem 0.25rem 0.25rem 0.25rem' }}>
+                  <h4 style={{ margin: 0, fontSize: '0.9rem', fontWeight: '600', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={img.title}>
+                    {img.title}
+                  </h4>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.15rem' }}>
+                    {img.category}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Lightbox Preview */}

@@ -210,51 +210,53 @@ export const ManageEvents = () => {
 
       <div style={{ marginTop: '2.5rem' }}>
         <h3>Current Platform Events</h3>
-        <table style={{ width: '100%', marginTop: '1rem', borderCollapse: 'collapse', background: 'var(--bg-primary)', borderRadius: '12px', overflow: 'hidden' }}>
-          <thead>
-            <tr style={{ background: 'var(--color-primary-light)', borderBottom: '1px solid var(--border-color)', textAlign: 'left' }}>
-              <th style={{ padding: '1rem', color: 'var(--color-primary)' }}>Event Details</th>
-              <th style={{ padding: '1rem', color: 'var(--color-primary)' }}>Schedule</th>
-              <th style={{ padding: '1rem', color: 'var(--color-primary)' }}>Location</th>
-              <th style={{ padding: '1rem', color: 'var(--color-primary)' }}>Status</th>
-              <th style={{ padding: '1rem', color: 'var(--color-primary)' }}>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {events.map(event => (
-              <tr key={event.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
-                <td style={{ padding: '1rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  {event.poster_url && (
-                    <img src={event.poster_url.startsWith('http') ? event.poster_url : `${API_URL}${event.poster_url}`} alt="" style={{ width: '45px', height: '30px', objectFit: 'cover', borderRadius: '4px' }} />
-                  )}
-                  <div>
-                    <span style={{ fontWeight: '600', display: 'block' }}>{event.title}</span>
-                    <small style={{ color: 'var(--text-muted)' }}>{event.category}</small>
-                  </div>
-                </td>
-                <td style={{ padding: '1rem', color: 'var(--text-secondary)' }}>{event.date} • {event.time}</td>
-                <td style={{ padding: '1rem', color: 'var(--text-secondary)' }}>{event.location}</td>
-                <td style={{ padding: '1rem' }}>
-                  <span style={{
-                    padding: '0.2rem 0.6rem', fontSize: '0.8rem', borderRadius: '4px', fontWeight: '600',
-                    background: event.status === 'upcoming' ? 'rgba(34, 197, 94, 0.15)' : event.status === 'ongoing' ? 'rgba(245, 158, 11, 0.15)' : 'rgba(100, 116, 139, 0.15)',
-                    color: event.status === 'upcoming' ? '#4ade80' : event.status === 'ongoing' ? '#fbbf24' : '#94a3b8'
-                  }}>{event.status}</span>
-                </td>
-                <td style={{ padding: '1rem' }}>
-                  <div style={{ display: 'flex', gap: '0.5rem' }}>
-                    <button onClick={() => handleEditClick(event)} className="btn btn-secondary" style={{ padding: '0.5rem', background: 'var(--bg-glass-card)', border: 'none' }} title="Edit">
-                      <Edit2 size={15} />
-                    </button>
-                    <button onClick={() => handleDelete(event.id)} className="btn btn-secondary" style={{ padding: '0.5rem', background: '#ef4444', color: 'white', border: 'none' }} title="Delete">
-                      <Trash2 size={15} />
-                    </button>
-                  </div>
-                </td>
+        <div style={{ overflowX: 'auto', marginTop: '1rem', borderRadius: '12px' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', background: 'var(--bg-primary)', overflow: 'hidden' }}>
+            <thead>
+              <tr style={{ background: 'var(--color-primary-light)', borderBottom: '1px solid var(--border-color)', textAlign: 'left' }}>
+                <th style={{ padding: '1rem', color: 'var(--color-primary)' }}>Event Details</th>
+                <th style={{ padding: '1rem', color: 'var(--color-primary)' }}>Schedule</th>
+                <th style={{ padding: '1rem', color: 'var(--color-primary)' }}>Location</th>
+                <th style={{ padding: '1rem', color: 'var(--color-primary)' }}>Status</th>
+                <th style={{ padding: '1rem', color: 'var(--color-primary)' }}>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {events.map(event => (
+                <tr key={event.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
+                  <td style={{ padding: '1rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    {event.poster_url && (
+                      <img src={event.poster_url.startsWith('http') ? event.poster_url : `${API_URL}${event.poster_url}`} alt="" onError={(e) => { e.target.src = 'https://placehold.co/100x100/1e293b/334155?text=No+Poster'; }} style={{ width: '45px', height: '30px', objectFit: 'cover', borderRadius: '4px' }} />
+                    )}
+                    <div>
+                      <span style={{ fontWeight: '600', display: 'block' }}>{event.title}</span>
+                      <small style={{ color: 'var(--text-muted)' }}>{event.category}</small>
+                    </div>
+                  </td>
+                  <td style={{ padding: '1rem', color: 'var(--text-secondary)' }}>{event.date} • {event.time}</td>
+                  <td style={{ padding: '1rem', color: 'var(--text-secondary)' }}>{event.location}</td>
+                  <td style={{ padding: '1rem' }}>
+                    <span style={{
+                      padding: '0.2rem 0.6rem', fontSize: '0.8rem', borderRadius: '4px', fontWeight: '600',
+                      background: event.status === 'upcoming' ? 'rgba(34, 197, 94, 0.15)' : event.status === 'ongoing' ? 'rgba(245, 158, 11, 0.15)' : 'rgba(100, 116, 139, 0.15)',
+                      color: event.status === 'upcoming' ? '#4ade80' : event.status === 'ongoing' ? '#fbbf24' : '#94a3b8'
+                    }}>{event.status}</span>
+                  </td>
+                  <td style={{ padding: '1rem' }}>
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <button onClick={() => handleEditClick(event)} className="btn btn-secondary" style={{ padding: '0.5rem', background: 'var(--bg-glass-card)', border: 'none' }} title="Edit">
+                        <Edit2 size={15} />
+                      </button>
+                      <button onClick={() => handleDelete(event.id)} className="btn btn-secondary" style={{ padding: '0.5rem', background: '#ef4444', color: 'white', border: 'none' }} title="Delete">
+                        <Trash2 size={15} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

@@ -149,9 +149,9 @@ export const ManageMembers = () => {
       </div>
 
       {/* Table */}
-      <div>
-        {filteredMembers.length === 0 ? <p>No members found matching filters.</p> : (
-          <table style={{ width: '100%', borderCollapse: 'collapse', background: 'var(--bg-primary)', borderRadius: '12px', overflow: 'hidden' }}>
+      <div style={{ overflowX: 'auto', borderRadius: '12px' }}>
+        {filteredMembers.length === 0 ? <p style={{ padding: '2rem', color: 'var(--text-secondary)' }}>No members found matching filters.</p> : (
+          <table style={{ width: '100%', borderCollapse: 'collapse', background: 'var(--bg-primary)', overflow: 'hidden' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid var(--border-color)', textAlign: 'left', background: 'var(--color-primary-light)' }}>
                 <th style={{ padding: '1rem', color: 'var(--color-primary)' }}>Student</th>

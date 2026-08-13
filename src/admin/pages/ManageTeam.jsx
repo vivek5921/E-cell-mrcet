@@ -174,44 +174,46 @@ export const ManageTeam = () => {
 
       <div style={{ marginTop: '2.5rem' }}>
         <h3>Current Team Members</h3>
-        <table style={{ width: '100%', marginTop: '1rem', borderCollapse: 'collapse', background: 'var(--bg-primary)', borderRadius: '12px', overflow: 'hidden' }}>
-          <thead>
-            <tr style={{ background: 'var(--color-primary-light)', borderBottom: '1px solid var(--border-color)', textAlign: 'left' }}>
-              <th style={{ padding: '1rem', color: 'var(--color-primary)' }}>Member</th>
-              <th style={{ padding: '1rem', color: 'var(--color-primary)' }}>Role</th>
-              <th style={{ padding: '1rem', color: 'var(--color-primary)' }}>Category</th>
-              <th style={{ padding: '1rem', color: 'var(--color-primary)' }}>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {team.map(member => (
-              <tr key={member.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
-                <td style={{ padding: '1rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'var(--color-primary-light)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', fontWeight: 'bold' }}>
-                    {member.image_url ? (
-                      <img src={member.image_url.startsWith('http') ? member.image_url : `${API_URL}${member.image_url}`} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    ) : (
-                      member.name.substring(0, 2).toUpperCase()
-                    )}
-                  </div>
-                  <span style={{ fontWeight: '500' }}>{member.name}</span>
-                </td>
-                <td style={{ padding: '1rem', color: 'var(--text-secondary)' }}>{member.role}</td>
-                <td style={{ padding: '1rem', color: 'var(--text-secondary)' }}>{member.category}</td>
-                <td style={{ padding: '1rem' }}>
-                  <div style={{ display: 'flex', gap: '0.5rem' }}>
-                    <button onClick={() => handleEditClick(member)} className="btn btn-secondary" style={{ padding: '0.5rem', background: 'var(--bg-glass-card)', border: 'none' }} title="Edit">
-                      <Edit2 size={15} />
-                    </button>
-                    <button onClick={() => handleDelete(member.id)} className="btn btn-secondary" style={{ padding: '0.5rem', background: '#ef4444', color: 'white', border: 'none' }} title="Delete">
-                      <Trash2 size={15} />
-                    </button>
-                  </div>
-                </td>
+        <div style={{ overflowX: 'auto', marginTop: '1rem', borderRadius: '12px' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', background: 'var(--bg-primary)', overflow: 'hidden' }}>
+            <thead>
+              <tr style={{ background: 'var(--color-primary-light)', borderBottom: '1px solid var(--border-color)', textAlign: 'left' }}>
+                <th style={{ padding: '1rem', color: 'var(--color-primary)' }}>Member</th>
+                <th style={{ padding: '1rem', color: 'var(--color-primary)' }}>Role</th>
+                <th style={{ padding: '1rem', color: 'var(--color-primary)' }}>Category</th>
+                <th style={{ padding: '1rem', color: 'var(--color-primary)' }}>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {team.map(member => (
+                <tr key={member.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
+                  <td style={{ padding: '1rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'var(--color-primary-light)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', fontWeight: 'bold' }}>
+                      {member.image_url ? (
+                        <img src={member.image_url.startsWith('http') ? member.image_url : `${API_URL}${member.image_url}`} alt="" onError={(e) => { e.target.src = 'https://placehold.co/100x100/1e293b/334155?text=No+Photo'; }} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      ) : (
+                        member.name.substring(0, 2).toUpperCase()
+                      )}
+                    </div>
+                    <span style={{ fontWeight: '500' }}>{member.name}</span>
+                  </td>
+                  <td style={{ padding: '1rem', color: 'var(--text-secondary)' }}>{member.role}</td>
+                  <td style={{ padding: '1rem', color: 'var(--text-secondary)' }}>{member.category}</td>
+                  <td style={{ padding: '1rem' }}>
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <button onClick={() => handleEditClick(member)} className="btn btn-secondary" style={{ padding: '0.5rem', background: 'var(--bg-glass-card)', border: 'none' }} title="Edit">
+                        <Edit2 size={15} />
+                      </button>
+                      <button onClick={() => handleDelete(member.id)} className="btn btn-secondary" style={{ padding: '0.5rem', background: '#ef4444', color: 'white', border: 'none' }} title="Delete">
+                        <Trash2 size={15} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

@@ -53,7 +53,7 @@ app.use((err, req, res, _next) => {
 // Seed Database
 const seedDatabase = async () => {
   try {
-    await sequelize.sync({ alter: true });
+    await sequelize.sync();
     
     // Default Admin
     const adminCount = await Admin.count();

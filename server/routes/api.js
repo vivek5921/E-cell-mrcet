@@ -1,7 +1,5 @@
 import express from 'express';
 import multer from 'multer';
-import { v2 as cloudinary } from 'cloudinary';
-import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import bcrypt from 'bcrypt';
@@ -31,23 +29,16 @@ const transporter = nodemailer.createTransport({
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Configure Cloudinary (Supports both CLOUDINARY_URL connection string and individual keys)
-if (process.env.CLOUDINARY_URL) {
-  cloudinary.config();
-} else {
-  cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET
-  });
-}
+// Cloudinary configuration removed (local storage fallback active)
 
-// Setup Multer for image uploads to Cloudinary
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: 'ecell_uploads',
-    allowed_formats: ['jpg', 'png', 'jpeg', 'webp', 'gif']
+// Setup Multer for local disk storage
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.join(__dirname, '../uploads'));
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
   }
 });
 const upload = multer({ storage: storage });
@@ -310,7 +301,7 @@ router.use(verifyToken);
 // Upload endpoint
 router.post('/upload', upload.single('image'), (req, res) => {
   if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
-  const url = req.file.path; // Cloudinary returns the full URL here
+  const url = `/uploads/${req.file.filename}`;
   res.json({ url });
 });
 
@@ -643,6 +634,11 @@ router.delete('/eureka/teams/:id', async (req, res) => {
   try {
     const team = await EurekaTeam.findByPk(req.params.id);
     if (!team) return res.status(404).json({ message: 'Team not found' });
+    
+    // Manually delete dependent records to bypass SQLite foreign key constraint failures
+    await EurekaScore.destroy({ where: { team_id: req.params.id } });
+    await EurekaParticipant.destroy({ where: { team_id: req.params.id } });
+    
     await team.destroy();
     res.json({ success: true });
   } catch (err) {
@@ -678,6 +674,10 @@ router.delete('/eureka/judges/:id', async (req, res) => {
   try {
     const judge = await EurekaJudge.findByPk(req.params.id);
     if (!judge) return res.status(404).json({ message: 'Judge not found' });
+    
+    // Manually delete dependent score records to bypass SQLite foreign key constraint failures
+    await EurekaScore.destroy({ where: { judge_id: req.params.id } });
+    
     await judge.destroy();
     res.json({ success: true });
   } catch (err) {
